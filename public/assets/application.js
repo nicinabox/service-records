@@ -32,6 +32,8 @@
           Backbone.history.start();
           if (_this.session.isAuthorized()) {
             return _this.session.trigger('auth:resolve');
+          } else {
+            return _this.session.trigger('auth:reject');
           }
         };
       })(this));
@@ -189,8 +191,9 @@
 
     Session.prototype.logout = function() {
       this.destroy();
+      localStorage.clear();
       this.clear();
-      return localStorage.clear();
+      return App.session = new this.constructor;
     };
 
     Session.prototype.authorize = function(data) {
@@ -199,7 +202,9 @@
         return localStorage.setItem('session', JSON.stringify(this.toJSON()));
       } else {
         data = JSON.parse(localStorage.getItem('session'));
-        return this.set(data);
+        if (data) {
+          return this.set(data);
+        }
       }
     };
 
@@ -434,35 +439,18 @@
     AddServiceView.prototype.events = {
       'submit form': 'createOrUpdateRecord',
       'click [data-destroy]': 'destroyRecord',
-      'populate': function(e) {
-        return console.log(e);
-      },
       'rendered': function() {
         this.$('textarea').autosize();
         return this.$('input[name=date]').datepicker({
-          format: 'mm-dd-yyyy',
           autoclose: true
         });
       }
     };
 
     AddServiceView.prototype.initialize = function() {
+      this.date = moment().format('MM-DD-YYYY');
       if (!this.model) {
-        this.date = moment().format('MM-DD-YYYY');
         return this.currentEstimatedMileage = this.collection.currentEstimatedMileage();
-      }
-    };
-
-    AddServiceView.prototype.context = function() {
-      var attrs, _ref;
-      console.log('context');
-      if (attrs = (_ref = this.model) != null ? _ref.attributes : void 0) {
-        return {
-          date: moment(new Date(attrs.date)).format('MM-DD-YYYY'),
-          mileage: numeral(attrs.mileage).format('0,0'),
-          cost: attrs.cost,
-          notes: attrs.notes
-        };
       }
     };
 
@@ -633,6 +621,11 @@
       this.title = options.title;
       this.render();
       options.view.retain();
+      if (!options.populate) {
+        options.view.populate({}, {
+          children: false
+        });
+      }
       this.stack.push(options);
       this.setView(options.view);
       this.appendTo(App.layout.$el);
@@ -763,6 +756,7 @@
       return App.popover.toggle({
         title: 'Edit Service',
         elem: e.currentTarget,
+        populate: true,
         focus: '[name=mileage]',
         top: -80,
         view: new App.AddServiceView({
@@ -1279,7 +1273,8 @@
 
     WelcomeView.prototype.initialize = function() {
       this.placeholder = 'E.g., ' + this.randomEmail();
-      return this.user = {};
+      this.user = {};
+      return console.log(App.session.toJSON());
     };
 
     WelcomeView.prototype.login = function(e) {
