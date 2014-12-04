@@ -285,10 +285,10 @@ this["Handlebars"]["templates"]["welcome"] = Handlebars.template({"1":function(d
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.user : depth0)) != null ? stack1.user : stack1), depth0))
     + "\" placeholder=\""
     + escapeExpression(((helper = (helper = helpers.placeholder || (depth0 != null ? depth0.placeholder : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"placeholder","hash":{},"data":data}) : helper)))
-    + "\" autofocus>\n              </div>\n\n              <button class=\"btn btn-primary\">Sign In</button>\n            </form>\n";
+    + "\" autofocus>\n              </div>\n\n              <button class=\"btn btn-primary\">Sign In</button>\n\n              <p class=\"help-block\">\n                <small class=\"text-muted\">\n                  First time? We'll setup your account automagically.\n                </small>\n              </p>\n            </form>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "<div id=\"main\">\n  <div class=\"container\">\n    <div class=\"text-center\">\n      <h2>\n        Easily keep service records for all your vehicles\n      </h2>\n      <br>\n\n      <div class=\"row\">\n        <div class=\"col-sm-6 col-sm-offset-3\">\n";
+  var stack1, buffer = "<div id=\"main\">\n  <div class=\"container\">\n      <div class=\"row text-center\">\n        <div class=\"col-sm-12\">\n          <h2>\n            <strong>\n              The easiest way keep service records for all your vehicles\n            </strong>\n          </h2>\n          <p class=\"lead\">\n            Navigating lists of menus just to log an oil change sucks. <br>\n            Spanner lets you keep records in a natural way.\n          </p>\n        </div>\n      </div>\n\n      <div class=\"row text-center\">\n        <div class=\"col-sm-6 col-sm-offset-3\">\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.authenticating : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "        </div>\n      </div>\n\n    </div>\n  </div>\n</div>\n";
+  return buffer + "        </div>\n      </div>\n\n    </div>\n\n  </div>\n</div>\n";
 },"useData":true});;

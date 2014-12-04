@@ -7316,6 +7316,14 @@ body {
 #welcome #user {
   width: 300px;
 }
+@media screen and (max-width: 750px) {
+  #welcome .text-center {
+    text-align: left;
+  }
+  #welcome #user {
+    width: 100%;
+  }
+}
 
 #vehicles .vehicle {
   padding: 20px;
