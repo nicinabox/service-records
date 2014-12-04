@@ -7308,6 +7308,11 @@ body {
   color: #555555;
 }
 
+.no-results {
+  text-align: center;
+  color: #999999;
+}
+
 #welcome #user {
   width: 300px;
 }

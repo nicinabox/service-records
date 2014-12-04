@@ -116,9 +116,11 @@ this["Handlebars"]["templates"]["records"] = Handlebars.template({"1":function(d
   return "              <td class=\"cost\">"
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "$0", (depth0 != null ? depth0.cost : depth0), {"name":"formatNumber","hash":{},"data":data})))
     + "</td>\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,depths) {
+},"5":function(depth0,helpers,partials,data) {
+  return "    <div class=\"no-results\">\n      <h3>You don't have any records yet.</h3>\n      <p>\n        Try adding your purchase as the first one.\n      </p>\n    </div>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,depths) {
   var stack1, buffer = "<div id=\"records\">\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.records : depth0), {"name":"each","hash":{},"fn":this.program(1, data, depths),"inverse":this.noop,"data":data});
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.records : depth0), {"name":"each","hash":{},"fn":this.program(1, data, depths),"inverse":this.program(5, data, depths),"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</div>\n";
 },"useData":true,"useDepths":true});;
