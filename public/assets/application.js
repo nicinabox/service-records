@@ -440,17 +440,21 @@
       'submit form': 'createOrUpdateRecord',
       'click [data-destroy]': 'destroyRecord',
       'rendered': function() {
-        this.$('textarea').autosize();
-        return this.$('input[name=date]').datepicker({
-          format: 'mm-dd-yyyy',
-          autoclose: true
-        });
+        return _.delay((function(_this) {
+          return function() {
+            _this.$('textarea').autosize();
+            return _this.$('input[name=date]').datepicker({
+              format: 'mm-dd-yyyy',
+              autoclose: true
+            });
+          };
+        })(this));
       }
     };
 
     AddServiceView.prototype.initialize = function() {
       if (!this.model) {
-        this.date = moment().format('MM-DD-YYYY');
+        this.date = moment().utc().format('MM-DD-YYYY');
         return this.currentEstimatedMileage = this.collection.currentEstimatedMileage();
       }
     };
@@ -769,7 +773,7 @@
             var attrs;
             attrs = this.model.attributes;
             return {
-              date: moment(new Date(attrs.date)).format('MM-DD-YYYY'),
+              date: moment(new Date(attrs.date)).utc().format('MM-DD-YYYY'),
               mileage: numeral(attrs.mileage).format('0,0'),
               cost: attrs.cost,
               notes: attrs.notes
