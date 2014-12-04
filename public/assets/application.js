@@ -442,14 +442,15 @@
       'rendered': function() {
         this.$('textarea').autosize();
         return this.$('input[name=date]').datepicker({
+          format: 'mm-dd-yyyy',
           autoclose: true
         });
       }
     };
 
     AddServiceView.prototype.initialize = function() {
-      this.date = moment().format('MM-DD-YYYY');
       if (!this.model) {
+        this.date = moment().format('MM-DD-YYYY');
         return this.currentEstimatedMileage = this.collection.currentEstimatedMileage();
       }
     };
@@ -621,13 +622,15 @@
       this.title = options.title;
       this.render();
       options.view.retain();
-      if (!options.populate) {
+      this.stack.push(options);
+      this.setView(options.view);
+      if (options.view.context) {
+        options.view.populate(options.view.context());
+      } else {
         options.view.populate({}, {
           children: false
         });
       }
-      this.stack.push(options);
-      this.setView(options.view);
       this.appendTo(App.layout.$el);
       this.setPosition(options);
       return this.selectInput(options);
@@ -756,13 +759,22 @@
       return App.popover.toggle({
         title: 'Edit Service',
         elem: e.currentTarget,
-        populate: true,
         focus: '[name=mileage]',
         top: -80,
         view: new App.AddServiceView({
           collection: this.collection,
           model: this.collection.get($(e.currentTarget).data('id')),
-          vehicle: this.model.toJSON()
+          vehicle: this.model.toJSON(),
+          context: function() {
+            var attrs;
+            attrs = this.model.attributes;
+            return {
+              date: moment(new Date(attrs.date)).format('MM-DD-YYYY'),
+              mileage: numeral(attrs.mileage).format('0,0'),
+              cost: attrs.cost,
+              notes: attrs.notes
+            };
+          }
         })
       });
     };
@@ -1273,8 +1285,7 @@
 
     WelcomeView.prototype.initialize = function() {
       this.placeholder = 'E.g., ' + this.randomEmail();
-      this.user = {};
-      return console.log(App.session.toJSON());
+      return this.user = {};
     };
 
     WelcomeView.prototype.login = function(e) {

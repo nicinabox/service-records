@@ -13,26 +13,29 @@ this["Handlebars"]["templates"]["add_reminder"] = Handlebars.template({"1":funct
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["add_service"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  return "      <small class=\"help-block\">\n        Your current mileage (we estimated)\n      </small>\n";
-  },"3":function(depth0,helpers,partials,data) {
-  return "    <div class=\"form-group\">\n      <label class=\"control-label\" for=\"cost\">Cost</label>\n      <input type=\"number\" name=\"cost\" class=\"form-control\"\n        placeholder=\"E.g., 40\">\n    </div>\n";
+  var helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "      <input type=\"text\" name=\"mileage\" class=\"form-control\"\n        value=\""
+    + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "0,0", (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
+    + "\" placeholder=\"E.g., 13,500\">\n      <small class=\"help-block\">\n        Your current mileage (we estimated)\n      </small>\n";
+},"3":function(depth0,helpers,partials,data) {
+  return "      <input type=\"text\" name=\"mileage\" class=\"form-control\" placeholder=\"E.g., 13,500\">\n";
   },"5":function(depth0,helpers,partials,data) {
+  return "    <div class=\"form-group\">\n      <label class=\"control-label\" for=\"cost\">Cost</label>\n      <input type=\"number\" name=\"cost\" class=\"form-control\"\n        placeholder=\"E.g., 40\">\n    </div>\n";
+  },"7":function(depth0,helpers,partials,data) {
   return "    <a href=\"#\" class=\"btn btn-danger pull-right\" data-destroy>\n      Remove\n    </a>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"date\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
     + escapeExpression(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"date","hash":{},"data":data}) : helper)))
-    + "\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"mileage\">Mileage</label>\n    <input type=\"text\" name=\"mileage\" class=\"form-control\"\n      value=\""
-    + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "0,0", (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
-    + "\" placeholder=\"E.g., 13,500\">\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+    + "\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"mileage\">Mileage</label>\n\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "  </div>\n\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = ((stack1 = (depth0 != null ? depth0.vehicle : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = ((stack1 = (depth0 != null ? depth0.vehicle : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"notes\">Notes</label>\n    <textarea name=\"notes\" class=\"form-control\"\n      placeholder=\"E.g., Change oil, oil filter\"></textarea>\n  </div>\n\n  <input type=\"hidden\" name=\"vehicle_id\" value="
     + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
     + ">\n  <button class=\"btn btn-success\">Save</button>\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.model : depth0), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.model : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</form>\n";
 },"useData":true});;
