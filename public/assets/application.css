@@ -7325,7 +7325,7 @@ body {
   -webkit-border-radius: 3px;
   border-radius: 3px;
   display: block;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   font-weight: bold;
 }
 #vehicles .vehicle:before, #vehicles .vehicle:after {
@@ -7359,12 +7359,6 @@ body {
   font-weight: bold;
   color: #444;
 }
-#vehicle table {
-  font-size: 18px;
-}
-#vehicle table .date, #vehicle table .mileage, #vehicle table .cost {
-  width: 100px;
-}
 
 #records h3 {
   position: sticky;
@@ -7374,8 +7368,34 @@ body {
 #records .record-year {
   margin-bottom: 40px;
 }
-#records tr {
-  cursor: pointer;
+#records table {
+  font-size: 18px;
+}
+#records table .date, #records table .mileage, #records table .cost {
+  width: 100px;
+}
+@media screen and (max-width: 970px) {
+  #records .record {
+    padding: 15px;
+    margin: 0 -15px;
+  }
+  #records .record:nth-child(2n+1) {
+    background: #fff;
+  }
+  #records .record header {
+    color: #555555;
+    margin-bottom: 2px;
+  }
+  #records .record header span, #records .record header strong {
+    margin-right: 6px;
+  }
+  #records .record header .date {
+    font-weight: bold;
+  }
+  #records .record p {
+    margin: 0;
+    font-size: 18px;
+  }
 }
 
 #reminders a {

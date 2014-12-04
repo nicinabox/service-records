@@ -747,7 +747,7 @@
     RecordsView.prototype.name = 'records';
 
     RecordsView.prototype.events = {
-      'click #records tr': 'showEditServicePopover'
+      'click #records .record': 'showEditServicePopover'
     };
 
     RecordsView.prototype.initialize = function() {
