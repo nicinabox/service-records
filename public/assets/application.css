@@ -7313,8 +7313,25 @@ body {
   color: #999999;
 }
 
+#welcome #main {
+  margin-top: 60px;
+}
 #welcome #user {
   width: 300px;
+}
+#welcome #teaser {
+  margin-top: 60px;
+  height: 600px;
+  width: 100%;
+  overflow: hidden;
+  -webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+#welcome #teaser img {
+  max-width: 100%;
 }
 @media screen and (max-width: 750px) {
   #welcome .text-center {
