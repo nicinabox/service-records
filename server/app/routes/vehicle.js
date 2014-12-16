@@ -3,10 +3,43 @@ var express = require('express');
 var router = express.Router();
 
 var passwordless = require('passwordless');
+var EdmundsApi = require('../edmunds');
 
-var Vehicle  = require('../models/vehicle');
-var Record   = require('../models/record');
-var Reminder = require('../models/reminder');
+var Vehicle     = require('../models/vehicle');
+var Record      = require('../models/record');
+var Reminder    = require('../models/reminder');
+var Maintenance = require('../models/maintenance');
+
+var getVehicleDetails = function(vehicle, callback) {
+  if (!vehicle.vin) return;
+
+  var api = new EdmundsApi({
+    resource: 'vins/' + vehicle.vin
+  });
+
+  return api.fetch(callback);
+};
+
+var getVehicleMaintenance = function(vehicle, callback) {
+  if (!vehicle.vin) return;
+
+  var api = new EdmundsApi({
+    version: 1,
+    dataset: 'maintenance',
+    resource: 'actionrepository/findbymodelyearid',
+    params: {
+      modelyearid: modelYearId(vehicle)
+    }
+  })
+
+  api.fetch(callback)
+};
+
+var modelYearId = function(vehicle) {
+  if (vehicle.details) {
+    return vehicle.details.years[0].id;
+  }
+};
 
 router.get('/', function(req, res) {
   res.json({ message: 'hooray! welcome to our api!' });
@@ -19,10 +52,22 @@ router.route('/vehicles')
     var vehicle = new Vehicle();
     _.merge(vehicle, req.body, { user: req.user });
 
-    vehicle.save(function(err, v) {
-      if (err) res.send(err);
-      res.json(v);
-    });
+    if (vehicle.vin) {
+      getVehicleDetails(vehicle, function(err, resp, body) {
+        _.extend(vehicle, { details: JSON.parse(body) });
+
+        vehicle.save(function(err, v) {
+          if (err) res.send(err);
+          res.json(v);
+        });
+      });
+
+    } else {
+      vehicle.save(function(err, v) {
+        if (err) res.send(err);
+        res.json(v);
+      });
+    }
   })
 
   .get(function(req, res) {
@@ -45,12 +90,22 @@ router.route('/vehicles/:id')
       if (err) res.send(err);
       _.merge(vehicle, req.body);
 
-      vehicle.save(function(err) {
-        if (err) res.send(err);
+      if (vehicle.vin) {
+        getVehicleDetails(vehicle, function(err, resp, body) {
+          _.extend(vehicle, { details: JSON.parse(body) });
 
-        res.json(vehicle);
-      });
+          vehicle.save(function(err, v) {
+            if (err) res.send(err);
+            res.json(v);
+          });
+        });
 
+      } else {
+        vehicle.save(function(err) {
+          if (err) res.send(err);
+          res.json(vehicle);
+        });
+      }
     });
   })
 
@@ -61,6 +116,32 @@ router.route('/vehicles/:id')
       if (err) res.send(err);
 
       res.json(vehicle);
+    });
+  });
+
+router.route('/vehicles/:vehicleId/maintenance')
+  .get(function(req, res) {
+    var vehicleId = req.params.vehicleId
+    Maintenance.findOne({ vehicleId: vehicleId }, function(err, maintenance) {
+      if (err) res.send(err);
+
+      if (maintenance) {
+        res.json(maintenance);
+      } else {
+        Vehicle.findById(vehicleId, function(err, vehicle) {
+          getVehicleMaintenance(vehicle, function(err, resp, body) {
+            maintenance = new Maintenance
+
+            _.extend(maintenance, {
+              actions: JSON.parse(body),
+              vehicleId: vehicleId
+            });
+
+            maintenance.save()
+            res.json(maintenance);
+          });
+        });
+      }
     });
   });
 
