@@ -50,55 +50,6 @@
     }
   });
 
-  App.EdmundsApi = (function() {
-    EdmundsApi.prototype._options = {
-      host: 'https://api.edmunds.com',
-      prefix: 'api',
-      version: 2,
-      dataset: 'vehicle',
-      key: '27gb9pqv7cx57xwybknpw2zz',
-      params: {},
-      resource: ''
-    };
-
-    function EdmundsApi(options) {
-      this.options = _.extend({}, this._options, options);
-    }
-
-    EdmundsApi.prototype.fetch = function() {
-      return Backbone.ajax(this.url());
-    };
-
-    EdmundsApi.prototype.urlV1 = function() {
-      return [this.options.host, 'v' + this.options.version, this.options.prefix, this.options.dataset, this.options.resource].join('/');
-    };
-
-    EdmundsApi.prototype.urlV2 = function() {
-      return [this.options.host, this.options.prefix, this.options.dataset, 'v' + this.options.version, this.options.resource].join('/');
-    };
-
-    EdmundsApi.prototype.isUsingApiV1 = function() {
-      return this.options.version === 1;
-    };
-
-    EdmundsApi.prototype.url = function() {
-      var baseUrl, params;
-      if (this.isUsingApiV1()) {
-        baseUrl = this.urlV1();
-      } else {
-        baseUrl = this.urlV2();
-      }
-      params = $.param(_.extend({}, this.options.params, {
-        api_key: this.options.key,
-        fmt: 'json'
-      }));
-      return [baseUrl, params].join('?');
-    };
-
-    return EdmundsApi;
-
-  })();
-
   _sync = Backbone.sync;
 
   Backbone.sync = function(method, model, options) {
@@ -309,51 +260,8 @@
 
     Vehicle.prototype.validatePresence = ['name'];
 
-    Vehicle.prototype.initialize = function() {
-      this.on('sync', function() {
-        if (this.hasVin() && !this.hasDetails()) {
-          return this.details();
-        }
-      });
-      this.on('change:vin', function() {
-        if (this.hasVin()) {
-          return this.details();
-        }
-      });
-      return this.maintenanceSchedule = new App.MaintenanceSchedule({
-        vehicle: this
-      });
-    };
-
     Vehicle.prototype.settings = function() {
       return this.get('settings') || {};
-    };
-
-    Vehicle.prototype.squishVin = function() {
-      var vin;
-      vin = this.get('vin');
-      return vin.substr(0, 8) + vin.slice(9, 11);
-    };
-
-    Vehicle.prototype.details = function() {
-      var edmunds;
-      edmunds = new App.EdmundsApi({
-        resource: 'vins/' + this.get('vin')
-      });
-      return edmunds.fetch().done((function(_this) {
-        return function(data) {
-          _this.save({
-            details: data
-          });
-          return data;
-        };
-      })(this));
-    };
-
-    Vehicle.prototype.modelYearId = function() {
-      var details;
-      details = this.get('details');
-      return details.years[0].id;
     };
 
     Vehicle.prototype.hasVin = function() {
@@ -395,11 +303,16 @@
 
     MaintenanceSchedule.prototype.model = App.MaintenanceAction;
 
-    MaintenanceSchedule.prototype.initialize = function(options) {
-      this.vehicle = options.vehicle;
-      if (this.vehicle.hasDetails()) {
-        return this.fetch();
-      }
+    MaintenanceSchedule.prototype.url = function() {
+      return "/api/vehicles/" + this.vehicleId + "/maintenance";
+    };
+
+    MaintenanceSchedule.prototype.initialize = function(models, options) {
+      this.vehicleId = options.vehicleId;
+      this.vehicle = App.vehicles.get(this.vehicleId);
+      return this.listenTo(App.vehicles, 'sync', function() {
+        return this.vehicle = App.vehicles.get(this.vehicleId);
+      });
     };
 
     MaintenanceSchedule.prototype.nextActions = function() {
@@ -420,25 +333,8 @@
       return _(actions).compact().indexBy('item').values().value();
     };
 
-    MaintenanceSchedule.prototype.fetch = function() {
-      var edmunds;
-      edmunds = new App.EdmundsApi({
-        version: 1,
-        dataset: 'maintenance',
-        resource: 'actionrepository/findbymodelyearid',
-        params: {
-          modelyearid: this.vehicle.modelYearId()
-        }
-      });
-      return edmunds.fetch().done((function(_this) {
-        return function(data) {
-          return _this.reset(_this.parse(data));
-        };
-      })(this));
-    };
-
     MaintenanceSchedule.prototype.parse = function(data) {
-      return data.actionHolder;
+      return data.actions.actionHolder;
     };
 
     return MaintenanceSchedule;
@@ -1280,6 +1176,9 @@
     VehicleView.prototype.initialize = function(id) {
       this.vehicles = App.vehicles;
       this.model = this.vehicles.get(id);
+      this.maintenance = new App.MaintenanceSchedule([], {
+        vehicleId: id
+      });
       this.reminders = new App.Reminders([], {
         vehicleId: id
       });
@@ -1289,20 +1188,18 @@
       this.listenTo(this.vehicles, 'sync', function() {
         this.setModel(this.vehicles.get(id));
         this.recordsView.setModel(this.model);
-        this.listenTo(this.model, 'change', this.render);
-        return this.model.maintenanceSchedule.on('reset', (function(_this) {
-          return function() {
-            _this.model.set({
-              milesPerDay: _this.collection.milesPerDay(),
-              currentEstimatedMileage: _this.collection.currentEstimatedMileage()
-            });
-            _this.nextActions = _this.model.maintenanceSchedule.nextActions();
-            return _this.render();
-          };
-        })(this));
+        return this.listenTo(this.model, 'change', this.render);
       });
       this.listenTo(this.collection, 'add sync remove', function() {
         this.milesPerYear = this.collection.milesPerYear();
+        return this.render();
+      });
+      this.listenTo(this.maintenance, 'sync', function() {
+        this.model.set({
+          milesPerDay: this.collection.milesPerDay(),
+          currentEstimatedMileage: this.collection.currentEstimatedMileage()
+        });
+        this.nextActions = this.maintenance.nextActions();
         return this.render();
       });
       this.sessionView = new App.SessionView;
@@ -1314,7 +1211,8 @@
       });
       this.vehicles.fetch();
       this.collection.fetch();
-      return this.reminders.fetch();
+      this.reminders.fetch();
+      return this.maintenance.fetch();
     };
 
     VehicleView.prototype.filterRecords = function(e) {
