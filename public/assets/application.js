@@ -50,6 +50,55 @@
     }
   });
 
+  App.EdmundsApi = (function() {
+    EdmundsApi.prototype._options = {
+      host: 'https://api.edmunds.com',
+      prefix: 'api',
+      version: 2,
+      dataset: 'vehicle',
+      key: '27gb9pqv7cx57xwybknpw2zz',
+      params: {},
+      resource: ''
+    };
+
+    function EdmundsApi(options) {
+      this.options = _.extend({}, this._options, options);
+    }
+
+    EdmundsApi.prototype.fetch = function() {
+      return Backbone.ajax(this.url());
+    };
+
+    EdmundsApi.prototype.urlV1 = function() {
+      return [this.options.host, 'v' + this.options.version, this.options.prefix, this.options.dataset, this.options.resource].join('/');
+    };
+
+    EdmundsApi.prototype.urlV2 = function() {
+      return [this.options.host, this.options.prefix, this.options.dataset, 'v' + this.options.version, this.options.resource].join('/');
+    };
+
+    EdmundsApi.prototype.isUsingApiV1 = function() {
+      return this.options.version === 1;
+    };
+
+    EdmundsApi.prototype.url = function() {
+      var baseUrl, params;
+      if (this.isUsingApiV1()) {
+        baseUrl = this.urlV1();
+      } else {
+        baseUrl = this.urlV2();
+      }
+      params = $.param(_.extend({}, this.options.params, {
+        api_key: this.options.key,
+        fmt: 'json'
+      }));
+      return [baseUrl, params].join('?');
+    };
+
+    return EdmundsApi;
+
+  })();
+
   _sync = Backbone.sync;
 
   Backbone.sync = function(method, model, options) {
@@ -91,8 +140,29 @@
       if (number) {
         return numeral(number).format(format);
       }
+    },
+    markdown: function(str) {
+      if (str) {
+        return marked(str);
+      }
+    },
+    any: function(collection, options) {
+      if (!_.isEmpty(collection)) {
+        return options.fn(this);
+      }
     }
   });
+
+  App.MaintenanceAction = (function(_super) {
+    __extends(MaintenanceAction, _super);
+
+    function MaintenanceAction() {
+      return MaintenanceAction.__super__.constructor.apply(this, arguments);
+    }
+
+    return MaintenanceAction;
+
+  })(Thorax.Model);
 
   App.Record = (function(_super) {
     __extends(Record, _super);
@@ -239,8 +309,59 @@
 
     Vehicle.prototype.validatePresence = ['name'];
 
+    Vehicle.prototype.initialize = function() {
+      this.on('sync', function() {
+        if (this.hasVin() && !this.hasDetails()) {
+          return this.details();
+        }
+      });
+      this.on('change:vin', function() {
+        if (this.hasVin()) {
+          return this.details();
+        }
+      });
+      return this.maintenanceSchedule = new App.MaintenanceSchedule({
+        vehicle: this
+      });
+    };
+
     Vehicle.prototype.settings = function() {
       return this.get('settings') || {};
+    };
+
+    Vehicle.prototype.squishVin = function() {
+      var vin;
+      vin = this.get('vin');
+      return vin.substr(0, 8) + vin.slice(9, 11);
+    };
+
+    Vehicle.prototype.details = function() {
+      var edmunds;
+      edmunds = new App.EdmundsApi({
+        resource: 'vins/' + this.get('vin')
+      });
+      return edmunds.fetch().done((function(_this) {
+        return function(data) {
+          _this.save({
+            details: data
+          });
+          return data;
+        };
+      })(this));
+    };
+
+    Vehicle.prototype.modelYearId = function() {
+      var details;
+      details = this.get('details');
+      return details.years[0].id;
+    };
+
+    Vehicle.prototype.hasVin = function() {
+      return !_.isEmpty(this.get('vin'));
+    };
+
+    Vehicle.prototype.hasDetails = function() {
+      return !_.isEmpty(this.get('details'));
     };
 
     Vehicle.prototype.validate = function(attrs) {
@@ -264,6 +385,65 @@
     return Vehicle;
 
   })(Thorax.Model);
+
+  App.MaintenanceSchedule = (function(_super) {
+    __extends(MaintenanceSchedule, _super);
+
+    function MaintenanceSchedule() {
+      return MaintenanceSchedule.__super__.constructor.apply(this, arguments);
+    }
+
+    MaintenanceSchedule.prototype.model = App.MaintenanceAction;
+
+    MaintenanceSchedule.prototype.initialize = function(options) {
+      this.vehicle = options.vehicle;
+      if (this.vehicle.hasDetails()) {
+        return this.fetch();
+      }
+    };
+
+    MaintenanceSchedule.prototype.nextActions = function() {
+      var MILEAGE, MPD, actions;
+      MILEAGE = this.vehicle.get('currentEstimatedMileage') || 0;
+      MPD = this.vehicle.get('milesPerDay') || 0;
+      actions = this.map(function(model) {
+        var inNextDays, inNextMileage, m;
+        m = model.toJSON();
+        inNextMileage = m.intervalMileage - (MILEAGE % m.intervalMileage);
+        inNextDays = Math.floor(inNextMileage / MPD);
+        if (inNextMileage < MPD * 90 && m.frequency === 4) {
+          m.inNextMileage = inNextMileage;
+          m.inNextDuration = moment().add(inNextDays, 'days').fromNow();
+          return m;
+        }
+      });
+      return _(actions).compact().indexBy('item').values().value();
+    };
+
+    MaintenanceSchedule.prototype.fetch = function() {
+      var edmunds;
+      edmunds = new App.EdmundsApi({
+        version: 1,
+        dataset: 'maintenance',
+        resource: 'actionrepository/findbymodelyearid',
+        params: {
+          modelyearid: this.vehicle.modelYearId()
+        }
+      });
+      return edmunds.fetch().done((function(_this) {
+        return function(data) {
+          return _this.reset(_this.parse(data));
+        };
+      })(this));
+    };
+
+    MaintenanceSchedule.prototype.parse = function(data) {
+      return data.actionHolder;
+    };
+
+    return MaintenanceSchedule;
+
+  })(Thorax.Collection);
 
   App.Records = (function(_super) {
     __extends(Records, _super);
@@ -521,6 +701,59 @@
     };
 
     return AddVehicleView;
+
+  })(Thorax.View);
+
+  App.EditVehicleNotesView = (function(_super) {
+    __extends(EditVehicleNotesView, _super);
+
+    function EditVehicleNotesView() {
+      return EditVehicleNotesView.__super__.constructor.apply(this, arguments);
+    }
+
+    EditVehicleNotesView.prototype.name = 'edit_vehicle_notes';
+
+    EditVehicleNotesView.prototype.events = {
+      'submit form': 'saveVehicle',
+      'rendered': function() {
+        return _.delay((function(_this) {
+          return function() {
+            return _this.$('textarea').autosize();
+          };
+        })(this));
+      }
+    };
+
+    EditVehicleNotesView.prototype.saveVehicle = function(e) {
+      e.preventDefault();
+      this.model.save(this.serialize());
+      return this.parent.close();
+    };
+
+    return EditVehicleNotesView;
+
+  })(Thorax.View);
+
+  App.EditVehicleView = (function(_super) {
+    __extends(EditVehicleView, _super);
+
+    function EditVehicleView() {
+      return EditVehicleView.__super__.constructor.apply(this, arguments);
+    }
+
+    EditVehicleView.prototype.name = 'edit_vehicle';
+
+    EditVehicleView.prototype.events = {
+      'submit form': 'saveVehicle'
+    };
+
+    EditVehicleView.prototype.saveVehicle = function(e) {
+      e.preventDefault();
+      this.model.save(this.serialize());
+      return this.parent.close();
+    };
+
+    return EditVehicleView;
 
   })(Thorax.View);
 
@@ -863,29 +1096,6 @@
 
   })(Thorax.View);
 
-  App.RenameVehicleView = (function(_super) {
-    __extends(RenameVehicleView, _super);
-
-    function RenameVehicleView() {
-      return RenameVehicleView.__super__.constructor.apply(this, arguments);
-    }
-
-    RenameVehicleView.prototype.name = 'rename_vehicle';
-
-    RenameVehicleView.prototype.events = {
-      'submit form': 'saveVehicle'
-    };
-
-    RenameVehicleView.prototype.saveVehicle = function(e) {
-      e.preventDefault();
-      this.model.save(this.serialize());
-      return this.parent.close();
-    };
-
-    return RenameVehicleView;
-
-  })(Thorax.View);
-
   App.RootView = (function(_super) {
     __extends(RootView, _super);
 
@@ -1057,6 +1267,7 @@
       'click .js-add-service': 'showAddServicePopover',
       'click .js-add-reminder': 'showAddReminderPopover',
       'click .js-remove-record': 'removeRecord',
+      'click .js-edit-vehicle-notes': 'showEditVehicleNotesPopover',
       'keyup #filter': 'filterRecords',
       'submit #header form': function(e) {
         return e.preventDefault();
@@ -1077,7 +1288,18 @@
       });
       this.listenTo(this.vehicles, 'sync', function() {
         this.setModel(this.vehicles.get(id));
-        return this.recordsView.setModel(this.model);
+        this.recordsView.setModel(this.model);
+        this.listenTo(this.model, 'change', this.render);
+        return this.model.maintenanceSchedule.on('reset', (function(_this) {
+          return function() {
+            _this.model.set({
+              milesPerDay: _this.collection.milesPerDay(),
+              currentEstimatedMileage: _this.collection.currentEstimatedMileage()
+            });
+            _this.nextActions = _this.model.maintenanceSchedule.nextActions();
+            return _this.render();
+          };
+        })(this));
       });
       this.listenTo(this.collection, 'add sync remove', function() {
         this.milesPerYear = this.collection.milesPerYear();
@@ -1154,9 +1376,20 @@
     VehicleView.prototype.showChangeNamePopover = function(e) {
       return App.popover.toggle({
         elem: e.currentTarget,
-        title: 'Rename Vehicle',
+        title: 'Edit Vehicle Details',
         populate: true,
-        view: new App.RenameVehicleView({
+        view: new App.EditVehicleView({
+          model: this.model
+        })
+      });
+    };
+
+    VehicleView.prototype.showEditVehicleNotesPopover = function(e) {
+      return App.popover.toggle({
+        elem: e.currentTarget,
+        title: 'Edit Vehicle Notes',
+        populate: true,
+        view: new App.EditVehicleNotesView({
           model: this.model
         })
       });
