@@ -42,7 +42,7 @@ this["Handlebars"]["templates"]["add_service"] = Handlebars.template({"1":functi
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["add_vehicle"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  return "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"\">Name</label>\n    <input type=\"text\" name=\"name\" class=\"form-control\" placeholder=\"E.g., 2015 Mini Cooper GP\">\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n</form>\n";
+  return "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"\">Name</label>\n    <input type=\"text\" name=\"name\" class=\"form-control\" placeholder=\"E.g., 2015 Mini Cooper GP\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"\">VIN</label>\n    <input type=\"text\" name=\"name\" class=\"form-control\" placeholder=\"E.g., WMW12345678901234\">\n    <small class=\"help-block\">VIN is optional but recommended.</small>\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n</form>\n";
   },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
@@ -182,7 +182,9 @@ this["Handlebars"]["templates"]["rename_vehicle"] = Handlebars.template({"compil
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "<form action=\"\">\n  <div class=\"form-group\">\n    <label for=\"name\">Name</label>\n    <input type=\"text\" name=\"name\" class=\"form-control\"\n      value=\""
     + escapeExpression(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"value","hash":{},"data":data}) : helper)))
-    + "\">\n  </div>\n  <button class=\"btn btn-success\">Change</button>\n</form>\n";
+    + "\" placeholder=\"E.g., 2015 Mini Cooper GP\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"\">VIN</label>\n    <input type=\"text\" name=\"vin\" class=\"form-control\"\n      value=\""
+    + escapeExpression(((helper = (helper = helpers.vin || (depth0 != null ? depth0.vin : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"vin","hash":{},"data":data}) : helper)))
+    + "\" placeholder=\"E.g., WMW12345678901234\">\n    <small class=\"help-block\">VIN is optional but recommended.</small>\n  </div>\n\n  <button class=\"btn btn-success\">Change</button>\n</form>\n";
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
@@ -199,19 +201,27 @@ this["Handlebars"]["templates"]["session_view"] = Handlebars.template({"compiler
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["vehicle"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "          <div class=\"col-md-6\">\n            <p>\n              VIN: "
+    + escapeExpression(((helper = (helper = helpers.vin || (depth0 != null ? depth0.vin : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"vin","hash":{},"data":data}) : helper)))
+    + "\n            </p>\n          </div>\n";
+},"3":function(depth0,helpers,partials,data) {
   var helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "        <p class=\"text-muted text-right\">\n          You drive about "
+  return "          <div class=\"col-md-6\">\n            <p>\n              You drive about "
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "0,000", (depth0 != null ? depth0.milesPerYear : depth0), {"name":"formatNumber","hash":{},"data":data})))
-    + " miles a year\n        </p>\n";
+    + " miles a year\n            </p>\n          </div>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div id=\"header\">\n  <nav class=\"navbar navbar-default navbar-fixed-top\">\n\n    <div class=\"container-fluid\">\n      <div class=\"\">\n        <div class=\"col-md-4\">\n          <a href=\"#vehicles\" class=\"back btn\">\n            <i class=\"fa fa-chevron-left\"></i>\n          </a>\n          <a href=\"#\" class=\"js-name btn btn-default\">\n            "
     + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
     + "\n          </a>\n          <a href=\"#\" class=\"js-settings btn btn-default\">\n            Settings\n          </a>\n        </div>\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n          <form class=\"navbar-form\">\n            <input type=\"search\" name=\"filter\" id=\"filter\" class=\"form-control text-center\"\n              placeholder=\"Search\">\n          </form>\n        </div>\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n          <nav class=\"pull-right\">\n            <a href=\"#\" class=\"js-vehicles btn btn-default\">\n              Vehicles\n            </a>\n\n            "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.sessionView : depth0), {"name":"view","hash":{},"data":data})))
-    + "\n          </nav>\n        </div>\n      </div>\n    </div>\n\n  </nav>\n</div>\n\n<div class=\"container action-bar\">\n  <div class=\"row\">\n    <div class=\"col-sm-6\">\n      <nav>\n        <a href=\"#\" class=\"js-add-service btn btn-secondary\">\n          + Add Service\n        </a>\n        <a href=\"#\" class=\"js-add-reminder btn btn-secondary\">\n          + Add Reminder\n        </a>\n      </nav>\n    </div>\n\n    <div class=\"col-sm-6\">\n";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.milesPerYear : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+    + "\n          </nav>\n        </div>\n      </div>\n    </div>\n\n  </nav>\n</div>\n\n<div class=\"container action-bar\">\n  <div class=\"row\">\n    <div class=\"col-sm-6\">\n      <nav>\n        <a href=\"#\" class=\"js-add-service btn btn-secondary\">\n          + Add Service\n        </a>\n        <a href=\"#\" class=\"js-add-reminder btn btn-secondary\">\n          + Add Reminder\n        </a>\n      </nav>\n    </div>\n\n    <div class=\"col-sm-6\">\n      <div class=\"row text-right text-muted\">\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.vin : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "    </div>\n  </div>\n</div>\n\n<div id=\"main\">\n  <div class=\"container\">\n    "
+  buffer += "\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.milesPerYear : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "      </div>\n    </div>\n  </div>\n</div>\n\n<div id=\"main\">\n  <div class=\"container\">\n    "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.remindersView : depth0), {"name":"view","hash":{},"data":data})))
     + "\n    "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.recordsView : depth0), {"name":"view","hash":{},"data":data})))
