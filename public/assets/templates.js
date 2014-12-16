@@ -248,10 +248,17 @@ this["Handlebars"]["templates"]["vehicles"] = Handlebars.template({"1":function(
   if (stack1 != null) { buffer += stack1; }
   return buffer + "        </div>\n";
 },"2":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "            <span>"
+  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "            <span>\n              "
     + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
-    + "</span>\n";
+    + "\n            </span>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.vin : depth0), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"3":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "              <small class=\"text-muted\">\n                VIN: "
+    + escapeExpression(((helper = (helper = helpers.vin || (depth0 != null ? depth0.vin : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"vin","hash":{},"data":data}) : helper)))
+    + "\n              </small>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div id=\"header\">\n  <nav class=\"navbar navbar-default navbar-fixed-top\">\n    <div class=\"container-fluid\">\n      <div class=\"\">\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n        </div>\n        <div class=\"col-sm-4 text-center hidden-sm hidden-xs\">\n          <a href=\"/\" id=\"logo\">\n            <img src=\"/assets/wrench.png\" alt=\"\">\n          </a>\n        </div>\n        <div class=\"col-sm-4\">\n          <nav class=\"pull-right\">\n            "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.sessionView : depth0), {"name":"view","hash":{},"data":data})))

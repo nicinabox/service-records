@@ -7352,6 +7352,7 @@ body {
   display: block;
   margin-bottom: 15px;
   font-weight: bold;
+  min-height: 90px;
 }
 #vehicles .vehicle:before, #vehicles .vehicle:after {
   content: " ";
@@ -7368,7 +7369,10 @@ body {
 }
 #vehicles .vehicle span {
   display: block;
-  margin-bottom: 30px;
+}
+#vehicles .vehicle .text-muted, #vehicles .vehicle .row-heading {
+  color: #aaa8ca;
+  font-weight: normal;
 }
 #vehicles .vehicle.add-vehicle {
   background-color: #e6e6e6;
