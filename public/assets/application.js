@@ -318,7 +318,7 @@
     MaintenanceSchedule.prototype.nextActions = function() {
       var MILEAGE, MPD, actions;
       MILEAGE = this.vehicle.get('currentEstimatedMileage') || 0;
-      MPD = this.vehicle.get('milesPerDay') || 0;
+      MPD = this.vehicle.get('recentMilesPerDay') || 0;
       actions = this.map(function(model) {
         var inNextDays, inNextMileage, m;
         m = model.toJSON();
@@ -362,7 +362,7 @@
 
     Records.prototype.currentEstimatedMileage = function() {
       var currentMileage, elapsedDays, last, mpd;
-      mpd = this.milesPerDay();
+      mpd = this.recentMilesPerDay();
       if (!mpd) {
         return;
       }
@@ -388,6 +388,30 @@
         mpy = mpd * ONE_YEAR;
       }
       return Math.floor(mpy / 10) * 10;
+    };
+
+    Records.prototype.recentMilesPerDay = function(days) {
+      var ceil, elapsedDays, elapsedMileage, first, floor, last, models;
+      if (days == null) {
+        days = 90;
+      }
+      if (!this.length) {
+        return;
+      }
+      ceil = moment();
+      floor = ceil.subtract(days, 'days').startOf('month');
+      models = this.filter(function(model) {
+        var modelDate;
+        modelDate = moment(model.get('date'));
+        if (modelDate.isAfter(floor)) {
+          return model;
+        }
+      });
+      first = _.first(models).toJSON();
+      last = _.last(models).toJSON();
+      elapsedDays = moment(last.date).diff(first.date, 'days');
+      elapsedMileage = last.mileage - first.mileage;
+      return +(elapsedMileage / elapsedDays).toFixed(2);
     };
 
     Records.prototype.milesPerDay = function() {
@@ -1196,7 +1220,7 @@
       });
       this.listenTo(this.maintenance, 'sync', function() {
         this.model.set({
-          milesPerDay: this.collection.milesPerDay(),
+          recentMilesPerDay: this.collection.recentMilesPerDay(),
           currentEstimatedMileage: this.collection.currentEstimatedMileage()
         });
         this.nextActions = this.maintenance.nextActions();
