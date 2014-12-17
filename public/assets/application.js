@@ -31,6 +31,7 @@
           });
           Backbone.history.start();
           if (_this.session.isAuthorized()) {
+            _this.vehicles.fetch();
             return _this.session.trigger('auth:resolve');
           } else {
             return _this.session.trigger('auth:reject');
@@ -90,6 +91,11 @@
     formatNumber: function(format, number) {
       if (number) {
         return numeral(number).format(format);
+      }
+    },
+    capitalize: function(str) {
+      if (str) {
+        return _.capitalize(str);
       }
     },
     markdown: function(str) {
@@ -260,6 +266,10 @@
 
     Vehicle.prototype.validatePresence = ['name'];
 
+    Vehicle.prototype.url = function() {
+      return "/api/vehicles/" + this.id;
+    };
+
     Vehicle.prototype.settings = function() {
       return this.get('settings') || {};
     };
@@ -308,23 +318,17 @@
     };
 
     MaintenanceSchedule.prototype.initialize = function(models, options) {
-      this.vehicleId = options.vehicleId;
-      this.vehicle = App.vehicles.get(this.vehicleId);
-      return this.listenTo(App.vehicles, 'sync', function() {
-        return this.vehicle = App.vehicles.get(this.vehicleId);
-      });
+      return this.vehicleId = options.vehicleId;
     };
 
-    MaintenanceSchedule.prototype.nextActions = function() {
-      var MILEAGE, MPD, actions;
-      MILEAGE = this.vehicle.get('currentEstimatedMileage') || 0;
-      MPD = this.vehicle.get('recentMilesPerDay') || 0;
+    MaintenanceSchedule.prototype.nextActions = function(mileage, mpd) {
+      var actions;
       actions = this.map(function(model) {
         var inNextDays, inNextMileage, m;
         m = model.toJSON();
-        inNextMileage = m.intervalMileage - (MILEAGE % m.intervalMileage);
-        inNextDays = Math.floor(inNextMileage / MPD);
-        if (inNextMileage < MPD * 90 && m.frequency === 4) {
+        inNextMileage = m.intervalMileage - (mileage % m.intervalMileage);
+        inNextDays = Math.floor(inNextMileage / mpd);
+        if (inNextMileage < mpd * 90 && m.frequency === 4) {
           m.inNextMileage = inNextMileage;
           m.inNextDuration = moment().add(inNextDays, 'days').fromNow();
           return m;
@@ -1116,8 +1120,14 @@
     RootView.prototype.el = '#app';
 
     RootView.prototype.initialize = function() {
+      Thorax.setRootObject(this);
       _.bindAll(this, 'closePopoversWithClick');
       _.bindAll(this, 'closePopoversWithEsc');
+      this.on('load:start', Thorax.loadHandler(function() {
+        return NProgress.start();
+      }, function() {
+        return NProgress.done();
+      }));
       $(document).on('click', this.closePopoversWithClick);
       return $(document).on('keyup', this.closePopoversWithEsc);
     };
@@ -1221,16 +1231,18 @@
 
     VehicleDetailsView.prototype.initialize = function(id) {
       this.vehicles = App.vehicles;
-      return $.when(this.vehicles.fetch()).then((function(_this) {
-        return function() {
-          _this.model = _this.vehicles.get(id);
-          _this.listenTo(_this.model, 'change', _this.render);
-          _this.vehicleHeaderView = new App.VehicleHeaderView({
-            model: _this.model
-          });
-          return _this.render();
-        };
-      })(this));
+      if (this.vehicles.length) {
+        this.model = this.vehicles.get(id);
+      } else {
+        this.model = new App.Vehicle({
+          _id: id
+        });
+        this.model.fetch();
+      }
+      this.listenTo(this.model, 'change', this.render);
+      return this.vehicleHeaderView = new App.VehicleHeaderView({
+        model: this.model
+      });
     };
 
     VehicleDetailsView.prototype.refresh = function() {
@@ -1320,46 +1332,45 @@
 
     VehicleView.prototype.initialize = function(id) {
       this.vehicles = App.vehicles;
-      return $.when(this.vehicles.fetch()).then((function(_this) {
+      if (this.vehicles.length) {
+        this.model = this.vehicles.get(id);
+      } else {
+        this.model = new App.Vehicle({
+          _id: id
+        });
+        this.model.fetch();
+      }
+      this.collection = new App.Records([], {
+        vehicleId: id
+      });
+      this.reminders = new App.Reminders([], {
+        vehicleId: id
+      });
+      this.maintenance = new App.MaintenanceSchedule([], {
+        vehicleId: id
+      });
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.collection, 'add sync remove', function() {
+        this.milesPerYear = this.collection.milesPerYear();
+        return this.render();
+      });
+      $.when(this.collection.fetch(), this.maintenance.fetch()).then((function(_this) {
         return function() {
-          _this.model = _this.vehicles.get(id);
-          _this.maintenance = new App.MaintenanceSchedule([], {
-            vehicleId: id
-          });
-          _this.reminders = new App.Reminders([], {
-            vehicleId: id
-          });
-          _this.collection = new App.Records([], {
-            vehicleId: id
-          });
-          _this.listenTo(_this.model, 'change', _this.render);
-          _this.listenTo(_this.collection, 'add sync remove', function() {
-            this.milesPerYear = this.collection.milesPerYear();
-            return this.render();
-          });
-          _this.listenTo(_this.maintenance, 'sync', function() {
-            this.model.set({
-              recentMilesPerDay: this.collection.recentMilesPerDay(),
-              currentEstimatedMileage: this.collection.currentEstimatedMileage()
-            });
-            this.nextActions = this.maintenance.nextActions();
-            return this.render();
-          });
-          _this.recordsView = new App.RecordsView({
-            model: _this.model,
-            collection: _this.collection
-          });
-          _this.remindersView = new App.RemindersView({
-            collection: _this.reminders
-          });
-          _this.vehicleHeaderView = new App.VehicleHeaderView({
-            model: _this.model
-          });
-          _this.collection.fetch();
-          _this.reminders.fetch();
-          return _this.maintenance.fetch();
+          _this.nextActions = _this.maintenance.nextActions(_this.collection.currentEstimatedMileage(), _this.collection.recentMilesPerDay());
+          return _this.render();
         };
       })(this));
+      this.recordsView = new App.RecordsView({
+        model: this.model,
+        collection: this.collection
+      });
+      this.remindersView = new App.RemindersView({
+        collection: this.reminders
+      });
+      this.vehicleHeaderView = new App.VehicleHeaderView({
+        model: this.model
+      });
+      return this.reminders.fetch();
     };
 
     VehicleView.prototype.removeRecord = function(e) {
