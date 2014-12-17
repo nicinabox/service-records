@@ -46,7 +46,7 @@
 
   _.mixin({
     capitalize: function(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      return string.charAt(0).toUpperCase() + string.slice(1);
     }
   });
 
@@ -391,7 +391,7 @@
     };
 
     Records.prototype.recentMilesPerDay = function(days) {
-      var ceil, elapsedDays, elapsedMileage, first, floor, last, models;
+      var ceil, elapsedDays, elapsedMileage, first, floor, last, models, previousIndex;
       if (days == null) {
         days = 90;
       }
@@ -409,6 +409,11 @@
       });
       first = _.first(models).toJSON();
       last = _.last(models).toJSON();
+      if (_.isEqual(first, last)) {
+        previousIndex = this.indexOf(this.last()) - 1;
+        first = this.at(previousIndex);
+        first = first.toJSON();
+      }
       elapsedDays = moment(last.date).diff(first.date, 'days');
       elapsedMileage = last.mileage - first.mileage;
       return +(elapsedMileage / elapsedDays).toFixed(2);
@@ -482,6 +487,82 @@
 
   })(Thorax.Collection);
 
+  App.VehicleHeaderView = (function(_super) {
+    __extends(VehicleHeaderView, _super);
+
+    function VehicleHeaderView() {
+      return VehicleHeaderView.__super__.constructor.apply(this, arguments);
+    }
+
+    VehicleHeaderView.prototype.name = 'vehicle_header';
+
+    VehicleHeaderView.prototype.events = {
+      'click .back': 'goBack',
+      'click .js-name': 'showChangeNamePopover',
+      'click .js-settings': 'showSettingsPopover',
+      'keyup #filter': 'filterRecords',
+      'submit #header form': function(e) {
+        return e.preventDefault();
+      },
+      'click a[class*=js-]': function(e) {
+        return e.preventDefault();
+      }
+    };
+
+    VehicleHeaderView.prototype.initialize = function() {
+      return this.sessionView = new App.SessionView;
+    };
+
+    VehicleHeaderView.prototype.goBack = function(e) {
+      var fragment, fragments;
+      e.preventDefault();
+      fragment = Backbone.history.fragment;
+      fragments = fragment.split('/');
+      fragments.pop();
+      return App.router.redirectTo(fragments.join('/'));
+    };
+
+    VehicleHeaderView.prototype.filterRecords = function(e) {
+      var re, val;
+      val = e.currentTarget.value;
+      re = new RegExp(val, 'i');
+      return this.parent.$('#records tr').each(function() {
+        var $this, content;
+        $this = $(this);
+        content = $this.text();
+        $this.hide();
+        if (re.test(content)) {
+          return $this.show();
+        }
+      });
+    };
+
+    VehicleHeaderView.prototype.showChangeNamePopover = function(e) {
+      return App.popover.toggle({
+        elem: e.currentTarget,
+        title: 'Edit Vehicle Details',
+        populate: true,
+        view: new App.EditVehicleView({
+          model: this.model
+        })
+      });
+    };
+
+    VehicleHeaderView.prototype.showSettingsPopover = function(e) {
+      return App.popover.toggle({
+        elem: e.currentTarget,
+        title: 'Vehicle Settings',
+        view: new App.VehicleSettingsView({
+          model: this.model,
+          collection: this.collection
+        })
+      });
+    };
+
+    return VehicleHeaderView;
+
+  })(Thorax.View);
+
   App.AddReminderView = (function(_super) {
     __extends(AddReminderView, _super);
 
@@ -554,7 +635,7 @@
 
     AddServiceView.prototype.initialize = function() {
       if (!this.model) {
-        this.date = moment().utc().format('MM-DD-YYYY');
+        this.date = moment().format('MM-DD-YYYY');
         return this.currentEstimatedMileage = this.collection.currentEstimatedMileage();
       }
     };
@@ -634,7 +715,7 @@
     EditVehicleNotesView.prototype.name = 'edit_vehicle_notes';
 
     EditVehicleNotesView.prototype.events = {
-      'submit form': 'saveVehicle',
+      'submit form': 'save',
       'rendered': function() {
         return _.delay((function(_this) {
           return function() {
@@ -644,7 +725,7 @@
       }
     };
 
-    EditVehicleNotesView.prototype.saveVehicle = function(e) {
+    EditVehicleNotesView.prototype.save = function(e) {
       e.preventDefault();
       this.model.save(this.serialize());
       return this.parent.close();
@@ -777,6 +858,9 @@
       this.stack = [];
       this.stackEmpty = true;
       this.title = options.title;
+      if (this.isTextSelected()) {
+        return;
+      }
       this.render();
       options.view.retain();
       this.stack.push(options);
@@ -824,6 +908,12 @@
       }
       selector = options.focus || 'input, textarea';
       return this.$(selector).first().select();
+    };
+
+    PopOverView.prototype.isTextSelected = function() {
+      if (window.getSelection) {
+        return !!window.getSelection().toString();
+      }
     };
 
     PopOverView.prototype.isLastInStack = function(view) {
@@ -1113,6 +1203,44 @@
 
   })(Thorax.View);
 
+  App.VehicleDetailsView = (function(_super) {
+    __extends(VehicleDetailsView, _super);
+
+    function VehicleDetailsView() {
+      return VehicleDetailsView.__super__.constructor.apply(this, arguments);
+    }
+
+    VehicleDetailsView.prototype.name = 'vehicle_details';
+
+    VehicleDetailsView.prototype.events = {
+      'click .js-refresh-details': 'refresh',
+      'click a[class*=js-]': function(e) {
+        return e.preventDefault();
+      }
+    };
+
+    VehicleDetailsView.prototype.initialize = function(id) {
+      this.vehicles = App.vehicles;
+      return $.when(this.vehicles.fetch()).then((function(_this) {
+        return function() {
+          _this.model = _this.vehicles.get(id);
+          _this.listenTo(_this.model, 'change', _this.render);
+          _this.vehicleHeaderView = new App.VehicleHeaderView({
+            model: _this.model
+          });
+          return _this.render();
+        };
+      })(this));
+    };
+
+    VehicleDetailsView.prototype.refresh = function() {
+      return this.model.save();
+    };
+
+    return VehicleDetailsView;
+
+  })(Thorax.View);
+
   App.VehicleSettingsView = (function(_super) {
     __extends(VehicleSettingsView, _super);
 
@@ -1181,17 +1309,10 @@
     VehicleView.prototype.id = 'vehicle';
 
     VehicleView.prototype.events = {
-      'click .js-name': 'showChangeNamePopover',
-      'click .js-vehicles': 'showVehiclesPopover',
-      'click .js-settings': 'showSettingsPopover',
       'click .js-add-service': 'showAddServicePopover',
       'click .js-add-reminder': 'showAddReminderPopover',
       'click .js-remove-record': 'removeRecord',
       'click .js-edit-vehicle-notes': 'showEditVehicleNotesPopover',
-      'keyup #filter': 'filterRecords',
-      'submit #header form': function(e) {
-        return e.preventDefault();
-      },
       'click a[class*=js-]': function(e) {
         return e.preventDefault();
       }
@@ -1199,59 +1320,46 @@
 
     VehicleView.prototype.initialize = function(id) {
       this.vehicles = App.vehicles;
-      this.model = this.vehicles.get(id);
-      this.maintenance = new App.MaintenanceSchedule([], {
-        vehicleId: id
-      });
-      this.reminders = new App.Reminders([], {
-        vehicleId: id
-      });
-      this.collection = new App.Records([], {
-        vehicleId: id
-      });
-      this.listenTo(this.vehicles, 'sync', function() {
-        this.setModel(this.vehicles.get(id));
-        this.recordsView.setModel(this.model);
-        return this.listenTo(this.model, 'change', this.render);
-      });
-      this.listenTo(this.collection, 'add sync remove', function() {
-        this.milesPerYear = this.collection.milesPerYear();
-        return this.render();
-      });
-      this.listenTo(this.maintenance, 'sync', function() {
-        this.model.set({
-          recentMilesPerDay: this.collection.recentMilesPerDay(),
-          currentEstimatedMileage: this.collection.currentEstimatedMileage()
-        });
-        this.nextActions = this.maintenance.nextActions();
-        return this.render();
-      });
-      this.sessionView = new App.SessionView;
-      this.recordsView = new App.RecordsView({
-        collection: this.collection
-      });
-      this.remindersView = new App.RemindersView({
-        collection: this.reminders
-      });
-      this.vehicles.fetch();
-      this.collection.fetch();
-      this.reminders.fetch();
-      return this.maintenance.fetch();
-    };
-
-    VehicleView.prototype.filterRecords = function(e) {
-      var re, val;
-      val = e.currentTarget.value;
-      re = new RegExp(val, 'i');
-      return this.$('#records tr').each(function() {
-        var $this, content;
-        $this = $(this);
-        content = $this.text();
-        $this.hide();
-        if (re.test(content)) {
-          return $this.show();
-        }
-      });
+      return $.when(this.vehicles.fetch()).then((function(_this) {
+        return function() {
+          _this.model = _this.vehicles.get(id);
+          _this.maintenance = new App.MaintenanceSchedule([], {
+            vehicleId: id
+          });
+          _this.reminders = new App.Reminders([], {
+            vehicleId: id
+          });
+          _this.collection = new App.Records([], {
+            vehicleId: id
+          });
+          _this.listenTo(_this.model, 'change', _this.render);
+          _this.listenTo(_this.collection, 'add sync remove', function() {
+            this.milesPerYear = this.collection.milesPerYear();
+            return this.render();
+          });
+          _this.listenTo(_this.maintenance, 'sync', function() {
+            this.model.set({
+              recentMilesPerDay: this.collection.recentMilesPerDay(),
+              currentEstimatedMileage: this.collection.currentEstimatedMileage()
+            });
+            this.nextActions = this.maintenance.nextActions();
+            return this.render();
+          });
+          _this.recordsView = new App.RecordsView({
+            model: _this.model,
+            collection: _this.collection
+          });
+          _this.remindersView = new App.RemindersView({
+            collection: _this.reminders
+          });
+          _this.vehicleHeaderView = new App.VehicleHeaderView({
+            model: _this.model
+          });
+          _this.collection.fetch();
+          _this.reminders.fetch();
+          return _this.maintenance.fetch();
+        };
+      })(this));
     };
 
     VehicleView.prototype.removeRecord = function(e) {
@@ -1286,44 +1394,14 @@
       });
     };
 
-    VehicleView.prototype.showVehiclesPopover = function(e) {
-      return App.popover.toggle({
-        elem: e.currentTarget,
-        view: new App.VehiclesMenu({
-          collection: this.vehicles
-        })
-      });
-    };
-
-    VehicleView.prototype.showChangeNamePopover = function(e) {
-      return App.popover.toggle({
-        elem: e.currentTarget,
-        title: 'Edit Vehicle Details',
-        populate: true,
-        view: new App.EditVehicleView({
-          model: this.model
-        })
-      });
-    };
-
     VehicleView.prototype.showEditVehicleNotesPopover = function(e) {
+      e.preventDefault();
       return App.popover.toggle({
         elem: e.currentTarget,
         title: 'Edit Vehicle Notes',
         populate: true,
         view: new App.EditVehicleNotesView({
           model: this.model
-        })
-      });
-    };
-
-    VehicleView.prototype.showSettingsPopover = function(e) {
-      return App.popover.toggle({
-        elem: e.currentTarget,
-        title: 'Vehicle Settings',
-        view: new App.VehicleSettingsView({
-          model: this.model,
-          collection: this.collection
         })
       });
     };
@@ -1478,6 +1556,7 @@
       '': 'welcome',
       'vehicles': 'vehicles',
       'vehicles/:id': 'vehicle',
+      'vehicles/:id/details': 'vehicleDetails',
       'login/:uid/:token': 'login'
     };
 
