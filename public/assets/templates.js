@@ -262,42 +262,52 @@ this["Handlebars"]["templates"]["vehicle"] = Handlebars.template({"1":function(d
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
-this["Handlebars"]["templates"]["vehicle_details"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, lambda=this.lambda;
-  return escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.vehicleHeaderView : depth0), {"name":"view","hash":{},"data":data})))
-    + "\n\n<div class=\"container action-bar\">\n  <div class=\"row\">\n    <div class=\"col-sm-9\">\n      <h4>\n        <strong>\n          "
+this["Handlebars"]["templates"]["vehicle_details"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "  <div id=\"main\">\n    <div class=\"container\">\n      <div class=\"no-results\">\n        <h3>"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.message : stack1), depth0))
+    + "</h3>\n      </div>\n    </div>\n  </div>\n";
+},"3":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
+  return "  <div class=\"container action-bar\">\n    <div class=\"row\">\n      <div class=\"col-sm-9\">\n        <h4>\n          <strong>\n            "
     + escapeExpression(lambda(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.years : stack1)) != null ? stack1['0'] : stack1)) != null ? stack1.year : stack1), depth0))
-    + "\n          "
+    + "\n            "
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.make : stack1)) != null ? stack1.name : stack1), depth0))
-    + "\n          "
+    + "\n            "
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.model : stack1)) != null ? stack1.name : stack1), depth0))
-    + "\n          "
+    + "\n            "
     + escapeExpression(lambda(((stack1 = ((stack1 = ((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.years : stack1)) != null ? stack1['0'] : stack1)) != null ? stack1.styles : stack1)) != null ? stack1['0'] : stack1)) != null ? stack1.trim : stack1), depth0))
-    + "\n        </strong>\n        <span class=\"text-muted\">&nbsp;"
+    + "\n          </strong>\n          <span class=\"text-muted\">&nbsp;"
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.vin : stack1), depth0))
-    + "</span>\n      </h4>\n    </div>\n\n    <div class=\"col-sm-3 text-right\">\n      <nav>\n        <a href=\"#\" class=\"js-refresh-details btn btn-secondary\">\n          <i class=\"fa fa-refresh fa-fw\"></i>\n          Refresh details\n        </a>\n      </nav>\n    </div>\n  </div>\n</div>\n\n<div id=\"main\">\n  <div class=\"container\">\n    <div class=\"block-grid-lg-5 block-grid-md-4 block-grid-sm-3 block-grid-xs-2\">\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</span>\n        </h4>\n      </div>\n\n      <div class=\"col-sm-3 text-right\">\n        <nav>\n          <a href=\"#\" class=\"js-refresh-details btn btn-secondary\">\n            <i class=\"fa fa-refresh fa-fw\"></i>\n            Refresh details\n          </a>\n        </nav>\n      </div>\n    </div>\n  </div>\n\n  <div id=\"main\">\n    <div class=\"container\">\n      <div class=\"block-grid-lg-5 block-grid-md-4 block-grid-sm-3 block-grid-xs-2\">\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.horsepower : stack1), depth0))
-    + " hp</strong>\n        </div>\n        <span class=\"text-muted\">\n          Horsepower\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + " hp</strong>\n          </div>\n          <span class=\"text-muted\">\n            Horsepower\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.torque : stack1), depth0))
-    + " ft-lbs</strong>\n        </div>\n        <span class=\"text-muted\">\n          Torque\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + " ft-lbs</strong>\n          </div>\n          <span class=\"text-muted\">\n            Torque\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.cylinder : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Cylinders\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Cylinders\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.totalValves : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Valves\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Valves\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.size : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Size\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Size\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.compressionRatio : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Compression\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Compression\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(((helpers.capitalize || (depth0 && depth0.capitalize) || helperMissing).call(depth0, ((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.compressorType : stack1), {"name":"capitalize","hash":{},"data":data})))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Compressor\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Compressor\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(((helpers.capitalize || (depth0 && depth0.capitalize) || helperMissing).call(depth0, ((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.engine : stack1)) != null ? stack1.configuration : stack1), {"name":"capitalize","hash":{},"data":data})))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Engine Configuration\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Engine Configuration\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.MPG : stack1)) != null ? stack1.city : stack1), depth0))
     + " / "
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.MPG : stack1)) != null ? stack1.highway : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          MPG\n        </span>\n      </div>\n\n      <div class=\"block-grid-item text-center\">\n        <div class=\"h2\">\n          <strong>$"
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            MPG\n          </span>\n        </div>\n\n        <div class=\"block-grid-item text-center\">\n          <div class=\"h2\">\n            <strong>$"
     + escapeExpression(lambda(((stack1 = ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.price : stack1)) != null ? stack1.usedPrivateParty : stack1), depth0))
-    + "</strong>\n        </div>\n        <span class=\"text-muted\">\n          Private Sale Price\n        </span>\n      </div>\n    </div>\n  </div>\n</div>\n\n";
+    + "</strong>\n          </div>\n          <span class=\"text-muted\">\n            Private Sale Price\n          </span>\n        </div>\n      </div>\n    </div>\n  </div>\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.vehicleHeaderView : depth0), {"name":"view","hash":{},"data":data})))
+    + "\n\n";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.details : depth0)) != null ? stack1.errorType : stack1), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};

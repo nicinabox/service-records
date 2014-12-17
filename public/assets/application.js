@@ -294,6 +294,12 @@
           }
         };
       })(this));
+      if (attrs.vin && attrs.vin.length !== 17) {
+        errors.push({
+          name: 'vin',
+          message: 'must be 17 characters'
+        });
+      }
       errors = _.compact(errors);
       if (!_.isEmpty(errors)) {
         return errors;
@@ -754,8 +760,19 @@
 
     EditVehicleView.prototype.saveVehicle = function(e) {
       e.preventDefault();
-      this.model.save(this.serialize());
-      return this.parent.close();
+      this.model.set(this.serialize(), {
+        validate: true
+      });
+      if (this.model.isValid()) {
+        this.model.save();
+        return this.parent.close();
+      } else {
+        return _.each(this.model.validationError, (function(_this) {
+          return function(error) {
+            return _this.$("[name=" + error.name + "]").closest('.form-group').addClass('has-error');
+          };
+        })(this));
+      }
     };
 
     return EditVehicleView;
