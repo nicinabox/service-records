@@ -328,13 +328,14 @@
     };
 
     MaintenanceSchedule.prototype.nextActions = function(mileage, mpd) {
-      var actions;
+      var RECURRING_ID, actions;
+      RECURRING_ID = 4;
       actions = this.map(function(model) {
         var inNextDays, inNextMileage, m;
         m = model.toJSON();
         inNextMileage = m.intervalMileage - (mileage % m.intervalMileage);
         inNextDays = Math.floor(inNextMileage / mpd);
-        if (inNextMileage < mpd * 90 && m.frequency === 4) {
+        if (inNextMileage < mpd * 90 && m.frequency === RECURRING_ID) {
           m.inNextMileage = inNextMileage;
           m.inNextDuration = moment().add(inNextDays, 'days').fromNow();
           return m;
@@ -866,7 +867,7 @@
 
     PopOverView.prototype.className = 'pop-over';
 
-    PopOverView.prototype.width = 300;
+    PopOverView.prototype.width = 340;
 
     PopOverView.prototype.events = {
       'click .close': 'close',
@@ -954,6 +955,9 @@
         right: $(window).width(),
         bottom: $(window).height()
       };
+      if (this.width > bounds.right) {
+        this.width = bounds.right - 10;
+      }
       position.right = offset.left + this.width;
       if (_.isNumber(top)) {
         position.top = offset.top + top;
@@ -963,6 +967,9 @@
       position.bottom = position.top + height;
       if (position.right > bounds.right) {
         position.left = offset.left - this.width + $(elem).outerWidth();
+      }
+      if (position.left < bounds.left) {
+        position.left = (bounds.right - this.width) / 2;
       }
       if (position.bottom > bounds.bottom + bounds.top) {
         position.top = bounds.bottom - height + bounds.top;
@@ -1270,6 +1277,38 @@
 
   })(Thorax.View);
 
+  App.VehicleNextActionsView = (function(_super) {
+    __extends(VehicleNextActionsView, _super);
+
+    function VehicleNextActionsView() {
+      return VehicleNextActionsView.__super__.constructor.apply(this, arguments);
+    }
+
+    VehicleNextActionsView.prototype.name = 'vehicle_next_actions';
+
+    VehicleNextActionsView.prototype.initialize = function() {
+      var _collectionFetch, _scheduleFetch;
+      this.schedule = new App.MaintenanceSchedule([], {
+        vehicleId: this.model.id
+      });
+      if (!this.schedule.length) {
+        _scheduleFetch = this.schedule.fetch();
+      }
+      if (!this.collection.length) {
+        _collectionFetch = this.collection.fetch();
+      }
+      return $.when(_scheduleFetch, _collectionFetch).then((function(_this) {
+        return function() {
+          _this.nextActions = _this.schedule.nextActions(_this.collection.currentEstimatedMileage(), _this.collection.recentMilesPerDay());
+          return _this.render();
+        };
+      })(this));
+    };
+
+    return VehicleNextActionsView;
+
+  })(Thorax.View);
+
   App.VehicleSettingsView = (function(_super) {
     __extends(VehicleSettingsView, _super);
 
@@ -1363,20 +1402,11 @@
       this.reminders = new App.Reminders([], {
         vehicleId: id
       });
-      this.maintenance = new App.MaintenanceSchedule([], {
-        vehicleId: id
-      });
       this.listenTo(this.model, 'change', this.render);
       this.listenTo(this.collection, 'add sync remove', function() {
         this.milesPerYear = this.collection.milesPerYear();
         return this.render();
       });
-      $.when(this.collection.fetch(), this.maintenance.fetch()).then((function(_this) {
-        return function() {
-          _this.nextActions = _this.maintenance.nextActions(_this.collection.currentEstimatedMileage(), _this.collection.recentMilesPerDay());
-          return _this.render();
-        };
-      })(this));
       this.recordsView = new App.RecordsView({
         model: this.model,
         collection: this.collection
@@ -1387,7 +1417,12 @@
       this.vehicleHeaderView = new App.VehicleHeaderView({
         model: this.model
       });
-      return this.reminders.fetch();
+      this.nextActionsView = new App.VehicleNextActionsView({
+        model: this.model,
+        collection: this.collection
+      });
+      this.reminders.fetch();
+      return this.collection.fetch();
     };
 
     VehicleView.prototype.removeRecord = function(e) {

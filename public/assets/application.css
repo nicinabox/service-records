@@ -7982,7 +7982,11 @@ body {
 #records h3 {
   position: sticky;
   position: -webkit-sticky;
-  top: 50px;
+  top: 43px;
+  background: #f7f7f7;
+  margin: 0;
+  padding-top: 22px;
+  padding-bottom: 11px;
 }
 #records .record-year {
   margin-bottom: 40px;
@@ -7994,6 +7998,12 @@ body {
   width: 100px;
 }
 @media screen and (max-width: 970px) {
+  #records h3 {
+    margin: 0 -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-bottom: 1px solid #eee;
+  }
   #records .record {
     padding: 15px;
     margin: 0 -15px;

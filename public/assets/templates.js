@@ -215,35 +215,16 @@ this["Handlebars"]["templates"]["vehicle"] = Handlebars.template({"1":function(d
 },"7":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "      <div class=\"row\">\n        <div class=\"col-sm-4\">\n          "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.remindersView : depth0), {"name":"view","hash":{},"data":data})))
-    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n          <h5 class=\"\">\n            <span class=\"fa fa-wrench fa-fw\"></span>\n            Recommended Maintenance\n          </h5>\n          <ul class=\"list-unstyled\">\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.nextActions : depth0), {"name":"each","hash":{},"fn":this.program(8, data),"inverse":this.program(10, data),"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  buffer += "          </ul>\n        </div>\n        <div class=\"col-sm-4\">\n          <h5 class=\"\">\n            <i class=\"fa fa-book fa-fw\"></i>\n            Vehicle Notes\n          </h5>\n\n          <div id=\"vehicle-notes\" class=\"js-edit-vehicle-notes\">\n            ";
+    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n          "
+    + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.nextActionsView : depth0), {"name":"view","hash":{},"data":data})))
+    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n          <h5 class=\"\">\n            <i class=\"fa fa-book fa-fw\"></i>\n            Vehicle Notes\n          </h5>\n\n          <div id=\"vehicle-notes\" class=\"js-edit-vehicle-notes\">\n            ";
   stack1 = ((helpers.markdown || (depth0 && depth0.markdown) || helperMissing).call(depth0, (depth0 != null ? depth0.notes : depth0), {"name":"markdown","hash":{},"data":data}));
   if (stack1 != null) { buffer += stack1; }
   buffer += "\n";
-  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.notes : depth0), {"name":"unless","hash":{},"fn":this.program(15, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.unless.call(depth0, (depth0 != null ? depth0.notes : depth0), {"name":"unless","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "          </div>\n        </div>\n      </div>\n";
 },"8":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "              <li>\n                "
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
-    + " "
-    + escapeExpression(((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"item","hash":{},"data":data}) : helper)))
-    + " "
-    + escapeExpression(((helper = (helper = helpers.inNextDuration || (depth0 != null ? depth0.inNextDuration : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"inNextDuration","hash":{},"data":data}) : helper)))
-    + "\n              </li>\n";
-},"10":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.vin : depth0), {"name":"if","hash":{},"fn":this.program(11, data),"inverse":this.program(13, data),"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer;
-},"11":function(depth0,helpers,partials,data) {
-  return "                <span class=\"text-muted\">All good!</span>\n";
-  },"13":function(depth0,helpers,partials,data) {
-  return "                <span class=\"text-muted\">\n                  Add your VIN (click on your vehicle in the upper left) to get maintenance based on your mileage.\n                </span>\n";
-  },"15":function(depth0,helpers,partials,data) {
   return "              <span class=\"text-muted\">\n                Add notes...\n              </span>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.vehicleHeaderView : depth0), {"name":"view","hash":{},"data":data})))
@@ -256,7 +237,7 @@ this["Handlebars"]["templates"]["vehicle"] = Handlebars.template({"1":function(d
   buffer += "      </div>\n    </div>\n  </div>\n</div>\n\n<div id=\"main\">\n  <div class=\"container\">\n";
   stack1 = ((helpers.empty || (depth0 && depth0.empty) || helperMissing).call(depth0, (depth0 != null ? depth0.collection : depth0), {"name":"empty","hash":{},"fn":this.program(5, data),"inverse":this.program(7, data),"data":data}));
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "    "
+  return buffer + "\n    "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.recordsView : depth0), {"name":"view","hash":{},"data":data})))
     + "\n  </div>\n</div>\n";
 },"useData":true});;
@@ -318,6 +299,39 @@ this["Handlebars"]["templates"]["vehicle_header"] = Handlebars.template({"compil
     + "\n          </a>\n          <a href=\"#\" class=\"js-settings btn btn-default\">\n            Settings\n          </a>\n        </div>\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n          <form class=\"navbar-form\">\n            <input type=\"search\" name=\"filter\" id=\"filter\" class=\"form-control text-center\"\n              placeholder=\"Search\">\n          </form>\n        </div>\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n          <nav class=\"pull-right\">\n            "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.sessionView : depth0), {"name":"view","hash":{},"data":data})))
     + "\n          </nav>\n        </div>\n      </div>\n    </div>\n\n  </nav>\n</div>\n";
+},"useData":true});;
+this["Handlebars"] = this["Handlebars"] || {};
+this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
+this["Handlebars"]["templates"]["vehicle_next_actions"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
+  return "";
+},"3":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "  <h5 class=\"\">\n    <span class=\"fa fa-wrench fa-fw\"></span>\n    Upcoming Maintenance\n  </h5>\n  <ul class=\"list-unstyled\">\n";
+  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.nextActions : depth0), {"name":"each","hash":{},"fn":this.program(4, data),"inverse":this.program(6, data),"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer + "  </ul>\n";
+},"4":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  return "      <li>\n        "
+    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"item","hash":{},"data":data}) : helper)))
+    + " "
+    + escapeExpression(((helper = (helper = helpers.inNextDuration || (depth0 != null ? depth0.inNextDuration : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"inNextDuration","hash":{},"data":data}) : helper)))
+    + "\n      </li>\n";
+},"6":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.vin : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.program(9, data),"data":data});
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
+},"7":function(depth0,helpers,partials,data) {
+  return "        <span class=\"text-muted\">All good!</span>\n";
+  },"9":function(depth0,helpers,partials,data) {
+  return "        <span class=\"text-muted\">\n          Add your VIN (click on your vehicle in the upper left) to get maintenance based on your mileage.\n        </span>\n";
+  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, helperMissing=helpers.helperMissing, buffer = "";
+  stack1 = ((helpers.empty || (depth0 && depth0.empty) || helperMissing).call(depth0, (depth0 != null ? depth0.schedule : depth0), {"name":"empty","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data}));
+  if (stack1 != null) { buffer += stack1; }
+  return buffer;
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
