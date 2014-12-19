@@ -267,7 +267,11 @@
     Vehicle.prototype.validatePresence = ['name'];
 
     Vehicle.prototype.url = function() {
-      return "/api/vehicles/" + this.id;
+      if (this.id) {
+        return "/api/vehicles/" + this.id;
+      } else {
+        return "/api/vehicles";
+      }
     };
 
     Vehicle.prototype.settings = function() {
