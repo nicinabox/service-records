@@ -406,7 +406,7 @@
       if (days == null) {
         days = 90;
       }
-      if (!this.length) {
+      if (!(this.length && this.length > 1)) {
         return;
       }
       ceil = moment();
