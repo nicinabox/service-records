@@ -7826,7 +7826,7 @@ body {
 #logo {
   display: inline-block;
   text-align: center;
-  padding: 10px 0;
+  padding: 5px 0;
   opacity: 0.3;
   width: 80px;
   -webkit-transition: opacity 200ms ease-out;
@@ -7834,6 +7834,7 @@ body {
 }
 #logo img {
   max-width: 100%;
+  height: 32px;
 }
 #logo:hover {
   opacity: 0.4;

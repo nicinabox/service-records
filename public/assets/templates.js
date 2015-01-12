@@ -24,8 +24,8 @@ this["Handlebars"]["templates"]["add_service"] = Handlebars.template({"1":functi
   },"7":function(depth0,helpers,partials,data) {
   return "    <a href=\"#\" class=\"btn btn-danger pull-right\" data-destroy>\n      Remove\n    </a>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"date\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
-    + escapeExpression(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"date","hash":{},"data":data}) : helper)))
+  var stack1, helper, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, functionType="function", buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"date\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
+    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD, YYYY", {"name":"formatDate","hash":{},"data":data})))
     + "\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"mileage\">Mileage</label>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
@@ -120,7 +120,7 @@ this["Handlebars"]["templates"]["records"] = Handlebars.template({"1":function(d
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "            <tr class=\"record\" data-id=\""
     + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
     + "\">\n              <td class=\"date\">"
-    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, "MMM DD", (depth0 != null ? depth0.date : depth0), {"name":"formatDate","hash":{},"data":data})))
+    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD", {"name":"formatDate","hash":{},"data":data})))
     + "</td>\n              <td class=\"mileage\">"
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "000,000", (depth0 != null ? depth0.mileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
     + "</td>\n\n";
@@ -138,7 +138,7 @@ this["Handlebars"]["templates"]["records"] = Handlebars.template({"1":function(d
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "          <div class=\"record\" data-id=\""
     + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
     + "\">\n            <header>\n              <span class=\"date\">"
-    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, "MMM DD", (depth0 != null ? depth0.date : depth0), {"name":"formatDate","hash":{},"data":data})))
+    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD", {"name":"formatDate","hash":{},"data":data})))
     + "</span>\n              <span class=\"mileage\">"
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "000,000", (depth0 != null ? depth0.mileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
     + "</span>\n\n";
@@ -368,7 +368,7 @@ this["Handlebars"]["templates"]["vehicles"] = Handlebars.template({"1":function(
     + escapeExpression(((helper = (helper = helpers.vin || (depth0 != null ? depth0.vin : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"vin","hash":{},"data":data}) : helper)))
     + "\n              </small>\n";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div id=\"header\">\n  <nav class=\"navbar navbar-default navbar-fixed-top\">\n    <div class=\"container-fluid\">\n      <div class=\"\">\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n        </div>\n        <div class=\"col-sm-4 text-center hidden-sm hidden-xs\">\n          <a href=\"/\" id=\"logo\">\n            <img src=\"/assets/wrench.png\" alt=\"\">\n          </a>\n        </div>\n        <div class=\"col-sm-4\">\n          <nav class=\"pull-right\">\n            "
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<div id=\"header\">\n  <nav class=\"navbar navbar-default navbar-fixed-top\">\n    <div class=\"container-fluid\">\n      <div class=\"\">\n        <div class=\"col-sm-4 hidden-sm hidden-xs\">\n        </div>\n        <div class=\"col-sm-4 text-center hidden-sm hidden-xs\">\n          <a href=\"/\" id=\"logo\">\n            <img src=\"/assets/logo-white.png\" alt=\"\">\n          </a>\n        </div>\n        <div class=\"col-sm-4\">\n          <nav class=\"pull-right\">\n            "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.sessionView : depth0), {"name":"view","hash":{},"data":data})))
     + "\n          </nav>\n        </div>\n      </div>\n    </div>\n\n  </nav>\n</div>\n\n\n<div id=\"main\">\n  <div class=\"container\">\n    <div class=\"row\">\n      <h5 class=\"row-heading\">\n        <span class=\"fa fa-car fa-fw\"></span>\n        All Vehicles\n      </h5>\n";
   stack1 = ((helpers.collection || (depth0 && depth0.collection) || helperMissing).call(depth0, {"name":"collection","hash":{

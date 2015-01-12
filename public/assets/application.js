@@ -83,7 +83,7 @@
     log: function(obj) {
       return console.log(obj);
     },
-    formatDate: function(format, date) {
+    formatDate: function(date, format) {
       if (date) {
         return moment(new Date(date)).utc().format(format);
       }
@@ -636,11 +636,14 @@
       'submit form': 'createOrUpdateRecord',
       'click [data-destroy]': 'destroyRecord',
       'rendered': function() {
-        return _.delay((function(_this) {
+        return _.defer((function(_this) {
           return function() {
+            if (!_this.$el) {
+              return;
+            }
             _this.$('textarea').autosize();
             return _this.$('input[name=date]').datepicker({
-              format: 'mm-dd-yyyy',
+              format: 'M d, yyyy',
               autoclose: true
             });
           };
@@ -650,7 +653,7 @@
 
     AddServiceView.prototype.initialize = function() {
       if (!this.model) {
-        this.date = moment().format('MM-DD-YYYY');
+        this.date = moment();
         return this.currentEstimatedMileage = this.collection.currentEstimatedMileage();
       }
     };
@@ -1048,7 +1051,7 @@
             var attrs;
             attrs = this.model.attributes;
             return {
-              date: moment(new Date(attrs.date)).utc().format('MM-DD-YYYY'),
+              date: moment(new Date(attrs.date)).utc().format('MMM DD, YYYY'),
               mileage: numeral(attrs.mileage).format('0,0'),
               cost: attrs.cost,
               notes: attrs.notes
