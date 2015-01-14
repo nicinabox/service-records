@@ -182,9 +182,9 @@ this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["remove_vehicle_confirmation"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "<form action=\"\">\n  <div class=\"form-group\">\n    <p class=\"help-block\">\n      If you're getting rid of this vehicle, consider Retiring it instead so your records will be preserved.\n    </p>\n\n    <label class=\"control-label\" for=\"\">Type the word: <em>"
+  return "<form action=\"\">\n  <div class=\"form-group\">\n    <p class=\"help-block\">\n      Removing a vehicle will remove all its records and cannot be undone!\n    </p>\n\n    <label class=\"control-label\" for=\"\">Type the word: <em>"
     + escapeExpression(((helper = (helper = helpers.confirmation_word || (depth0 != null ? depth0.confirmation_word : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"confirmation_word","hash":{},"data":data}) : helper)))
-    + "</em></label>\n    <input type=\"text\" name=\"confirmation\" class=\"form-control\">\n  </div>\n\n  <button class=\"btn btn-danger\">Remove</button>\n</form>\n";
+    + "</em></label>\n    <input type=\"text\" name=\"confirmation\" class=\"form-control\" autocomplete=\"off\">\n  </div>\n\n  <button class=\"btn btn-danger\">Remove</button>\n</form>\n";
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};

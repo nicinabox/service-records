@@ -441,6 +441,9 @@
       }
       first = this.first().toJSON();
       last = this.last().toJSON();
+      if (!last.mileage) {
+        return;
+      }
       elapsedDays = moment(last.date).diff(first.date, 'days');
       elapsedMileage = last.mileage - first.mileage;
       return +(elapsedMileage / elapsedDays).toFixed(2);
