@@ -382,9 +382,9 @@
         return;
       }
       last = this.last().toJSON();
-      elapsedDays = moment().diff(last.date, 'days');
+      elapsedDays = moment().subtract(1, 'day').diff(last.date, 'days');
       currentMileage = last.mileage + (elapsedDays * mpd);
-      return Math.floor(currentMileage / 10) * 10;
+      return currentMileage;
     };
 
     Records.prototype.milesPerYear = function() {
