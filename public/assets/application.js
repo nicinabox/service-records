@@ -1,8 +1,8 @@
 (function() {
-  var App, buildUrl, _sync,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __slice = [].slice;
+  var App, _sync, buildUrl,
+    extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    hasProp = {}.hasOwnProperty,
+    slice = [].slice;
 
   Handlebars.registerHelpers = function(methods) {
     return _.each(methods, function(fn, name) {
@@ -110,8 +110,8 @@
     }
   });
 
-  App.MaintenanceAction = (function(_super) {
-    __extends(MaintenanceAction, _super);
+  App.MaintenanceAction = (function(superClass) {
+    extend(MaintenanceAction, superClass);
 
     function MaintenanceAction() {
       return MaintenanceAction.__super__.constructor.apply(this, arguments);
@@ -121,8 +121,8 @@
 
   })(Thorax.Model);
 
-  App.Record = (function(_super) {
-    __extends(Record, _super);
+  App.Record = (function(superClass) {
+    extend(Record, superClass);
 
     function Record() {
       return Record.__super__.constructor.apply(this, arguments);
@@ -160,8 +160,8 @@
 
   })(Thorax.Model);
 
-  App.Reminder = (function(_super) {
-    __extends(Reminder, _super);
+  App.Reminder = (function(superClass) {
+    extend(Reminder, superClass);
 
     function Reminder() {
       return Reminder.__super__.constructor.apply(this, arguments);
@@ -193,8 +193,8 @@
 
   })(Thorax.Model);
 
-  App.Session = (function(_super) {
-    __extends(Session, _super);
+  App.Session = (function(superClass) {
+    extend(Session, superClass);
 
     function Session() {
       return Session.__super__.constructor.apply(this, arguments);
@@ -255,8 +255,8 @@
 
   })(Thorax.Model);
 
-  App.Vehicle = (function(_super) {
-    __extends(Vehicle, _super);
+  App.Vehicle = (function(superClass) {
+    extend(Vehicle, superClass);
 
     function Vehicle() {
       return Vehicle.__super__.constructor.apply(this, arguments);
@@ -314,8 +314,8 @@
 
   })(Thorax.Model);
 
-  App.MaintenanceSchedule = (function(_super) {
-    __extends(MaintenanceSchedule, _super);
+  App.MaintenanceSchedule = (function(superClass) {
+    extend(MaintenanceSchedule, superClass);
 
     function MaintenanceSchedule() {
       return MaintenanceSchedule.__super__.constructor.apply(this, arguments);
@@ -356,8 +356,8 @@
 
   })(Thorax.Collection);
 
-  App.Records = (function(_super) {
-    __extends(Records, _super);
+  App.Records = (function(superClass) {
+    extend(Records, superClass);
 
     function Records() {
       return Records.__super__.constructor.apply(this, arguments);
@@ -467,8 +467,8 @@
 
   })(Thorax.Collection);
 
-  App.Reminders = (function(_super) {
-    __extends(Reminders, _super);
+  App.Reminders = (function(superClass) {
+    extend(Reminders, superClass);
 
     function Reminders() {
       return Reminders.__super__.constructor.apply(this, arguments);
@@ -488,8 +488,8 @@
 
   })(Thorax.Collection);
 
-  App.Vehicles = (function(_super) {
-    __extends(Vehicles, _super);
+  App.Vehicles = (function(superClass) {
+    extend(Vehicles, superClass);
 
     function Vehicles() {
       return Vehicles.__super__.constructor.apply(this, arguments);
@@ -505,8 +505,8 @@
 
   })(Thorax.Collection);
 
-  App.VehicleHeaderView = (function(_super) {
-    __extends(VehicleHeaderView, _super);
+  App.VehicleHeaderView = (function(superClass) {
+    extend(VehicleHeaderView, superClass);
 
     function VehicleHeaderView() {
       return VehicleHeaderView.__super__.constructor.apply(this, arguments);
@@ -581,8 +581,8 @@
 
   })(Thorax.View);
 
-  App.AddReminderView = (function(_super) {
-    __extends(AddReminderView, _super);
+  App.AddReminderView = (function(superClass) {
+    extend(AddReminderView, superClass);
 
     function AddReminderView() {
       return AddReminderView.__super__.constructor.apply(this, arguments);
@@ -626,8 +626,8 @@
 
   })(Thorax.View);
 
-  App.AddServiceView = (function(_super) {
-    __extends(AddServiceView, _super);
+  App.AddServiceView = (function(superClass) {
+    extend(AddServiceView, superClass);
 
     function AddServiceView() {
       return AddServiceView.__super__.constructor.apply(this, arguments);
@@ -693,8 +693,8 @@
 
   })(Thorax.View);
 
-  App.AddVehicleView = (function(_super) {
-    __extends(AddVehicleView, _super);
+  App.AddVehicleView = (function(superClass) {
+    extend(AddVehicleView, superClass);
 
     function AddVehicleView() {
       return AddVehicleView.__super__.constructor.apply(this, arguments);
@@ -726,8 +726,8 @@
 
   })(Thorax.View);
 
-  App.EditVehicleNotesView = (function(_super) {
-    __extends(EditVehicleNotesView, _super);
+  App.EditVehicleNotesView = (function(superClass) {
+    extend(EditVehicleNotesView, superClass);
 
     function EditVehicleNotesView() {
       return EditVehicleNotesView.__super__.constructor.apply(this, arguments);
@@ -756,8 +756,8 @@
 
   })(Thorax.View);
 
-  App.EditVehicleView = (function(_super) {
-    __extends(EditVehicleView, _super);
+  App.EditVehicleView = (function(superClass) {
+    extend(EditVehicleView, superClass);
 
     function EditVehicleView() {
       return EditVehicleView.__super__.constructor.apply(this, arguments);
@@ -790,8 +790,8 @@
 
   })(Thorax.View);
 
-  App.ImportRecordsView = (function(_super) {
-    __extends(ImportRecordsView, _super);
+  App.ImportRecordsView = (function(superClass) {
+    extend(ImportRecordsView, superClass);
 
     function ImportRecordsView() {
       return ImportRecordsView.__super__.constructor.apply(this, arguments);
@@ -866,8 +866,8 @@
 
   })(Thorax.View);
 
-  App.PopOverView = (function(_super) {
-    __extends(PopOverView, _super);
+  App.PopOverView = (function(superClass) {
+    extend(PopOverView, superClass);
 
     function PopOverView() {
       return PopOverView.__super__.constructor.apply(this, arguments);
@@ -1018,8 +1018,8 @@
 
   })(Thorax.LayoutView);
 
-  App.RecordsView = (function(_super) {
-    __extends(RecordsView, _super);
+  App.RecordsView = (function(superClass) {
+    extend(RecordsView, superClass);
 
     function RecordsView() {
       return RecordsView.__super__.constructor.apply(this, arguments);
@@ -1068,8 +1068,8 @@
 
   })(Thorax.View);
 
-  App.RemindersView = (function(_super) {
-    __extends(RemindersView, _super);
+  App.RemindersView = (function(superClass) {
+    extend(RemindersView, superClass);
 
     function RemindersView() {
       return RemindersView.__super__.constructor.apply(this, arguments);
@@ -1111,8 +1111,8 @@
 
   })(Thorax.View);
 
-  App.RemoveVehicleConfirmationView = (function(_super) {
-    __extends(RemoveVehicleConfirmationView, _super);
+  App.RemoveVehicleConfirmationView = (function(superClass) {
+    extend(RemoveVehicleConfirmationView, superClass);
 
     function RemoveVehicleConfirmationView() {
       return RemoveVehicleConfirmationView.__super__.constructor.apply(this, arguments);
@@ -1144,8 +1144,8 @@
 
   })(Thorax.View);
 
-  App.RootView = (function(_super) {
-    __extends(RootView, _super);
+  App.RootView = (function(superClass) {
+    extend(RootView, superClass);
 
     function RootView() {
       return RootView.__super__.constructor.apply(this, arguments);
@@ -1189,8 +1189,8 @@
 
   })(Thorax.LayoutView);
 
-  App.SessionMenu = (function(_super) {
-    __extends(SessionMenu, _super);
+  App.SessionMenu = (function(superClass) {
+    extend(SessionMenu, superClass);
 
     function SessionMenu() {
       return SessionMenu.__super__.constructor.apply(this, arguments);
@@ -1211,8 +1211,8 @@
 
   })(Thorax.View);
 
-  App.SessionView = (function(_super) {
-    __extends(SessionView, _super);
+  App.SessionView = (function(superClass) {
+    extend(SessionView, superClass);
 
     function SessionView() {
       return SessionView.__super__.constructor.apply(this, arguments);
@@ -1247,8 +1247,8 @@
 
   })(Thorax.View);
 
-  App.VehicleDetailsView = (function(_super) {
-    __extends(VehicleDetailsView, _super);
+  App.VehicleDetailsView = (function(superClass) {
+    extend(VehicleDetailsView, superClass);
 
     function VehicleDetailsView() {
       return VehicleDetailsView.__super__.constructor.apply(this, arguments);
@@ -1287,8 +1287,8 @@
 
   })(Thorax.View);
 
-  App.VehicleNextActionsView = (function(_super) {
-    __extends(VehicleNextActionsView, _super);
+  App.VehicleNextActionsView = (function(superClass) {
+    extend(VehicleNextActionsView, superClass);
 
     function VehicleNextActionsView() {
       return VehicleNextActionsView.__super__.constructor.apply(this, arguments);
@@ -1319,8 +1319,8 @@
 
   })(Thorax.View);
 
-  App.VehicleSettingsView = (function(_super) {
-    __extends(VehicleSettingsView, _super);
+  App.VehicleSettingsView = (function(superClass) {
+    extend(VehicleSettingsView, superClass);
 
     function VehicleSettingsView() {
       return VehicleSettingsView.__super__.constructor.apply(this, arguments);
@@ -1375,8 +1375,8 @@
 
   })(Thorax.View);
 
-  App.VehicleView = (function(_super) {
-    __extends(VehicleView, _super);
+  App.VehicleView = (function(superClass) {
+    extend(VehicleView, superClass);
 
     function VehicleView() {
       return VehicleView.__super__.constructor.apply(this, arguments);
@@ -1483,8 +1483,8 @@
 
   })(Thorax.View);
 
-  App.VehiclesMenu = (function(_super) {
-    __extends(VehiclesMenu, _super);
+  App.VehiclesMenu = (function(superClass) {
+    extend(VehiclesMenu, superClass);
 
     function VehiclesMenu() {
       return VehiclesMenu.__super__.constructor.apply(this, arguments);
@@ -1512,8 +1512,8 @@
 
   })(Thorax.View);
 
-  App.VehiclesView = (function(_super) {
-    __extends(VehiclesView, _super);
+  App.VehiclesView = (function(superClass) {
+    extend(VehiclesView, superClass);
 
     function VehiclesView() {
       return VehiclesView.__super__.constructor.apply(this, arguments);
@@ -1577,8 +1577,8 @@
 
   })(Thorax.View);
 
-  App.WelcomeView = (function(_super) {
-    __extends(WelcomeView, _super);
+  App.WelcomeView = (function(superClass) {
+    extend(WelcomeView, superClass);
 
     function WelcomeView() {
       return WelcomeView.__super__.constructor.apply(this, arguments);
@@ -1622,8 +1622,8 @@
 
   })(Thorax.View);
 
-  App.ApplicationRouter = (function(_super) {
-    __extends(ApplicationRouter, _super);
+  App.ApplicationRouter = (function(superClass) {
+    extend(ApplicationRouter, superClass);
 
     ApplicationRouter.prototype.routes = {
       '': 'welcome',
@@ -1638,8 +1638,8 @@
         if (!this.constructor.prototype[method]) {
           return this.constructor.prototype[method] = function() {
             var options;
-            options = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-            return this.render.apply(this, [method].concat(__slice.call(options)));
+            options = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+            return this.render.apply(this, [method].concat(slice.call(options)));
           };
         }
       }, this);
@@ -1657,7 +1657,7 @@
 
     ApplicationRouter.prototype.render = function() {
       var method, name, options, view;
-      method = arguments[0], options = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      method = arguments[0], options = 2 <= arguments.length ? slice.call(arguments, 1) : [];
       name = _.capitalize(method);
       view = (function(func, args, ctor) {
         ctor.prototype = func.prototype;
