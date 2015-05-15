@@ -15,6 +15,7 @@ var app           = express();
 var mongoDbPath = process.env.MONGOLAB_URI || 'mongodb://localhost/service-records';
 mongoose.connect(mongoDbPath);
 
+var ONE_YEAR = 31557600000;
 var host = process.env.DELIVERY_HOST || 'localhost:8080';
 
 passwordless.init(new MongoStore(mongoDbPath), {
@@ -45,7 +46,8 @@ app.use(expressSession({
   saveUninitialized: true,
   resave: false
 }));
-app.use(express.static('public'));
+
+app.use(express.static('public', { maxAge: ONE_YEAR }));
 
 // Passwordless middleware
 app.use(passwordless.acceptToken());

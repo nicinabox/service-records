@@ -332,14 +332,15 @@
     };
 
     MaintenanceSchedule.prototype.nextActions = function(mileage, mpd) {
-      var RECURRING_ID, actions;
+      var DAYS, RECURRING_ID, actions;
       RECURRING_ID = 4;
+      DAYS = 90;
       actions = this.map(function(model) {
         var inNextDays, inNextMileage, m;
         m = model.toJSON();
         inNextMileage = m.intervalMileage - (mileage % m.intervalMileage);
         inNextDays = Math.floor(inNextMileage / mpd);
-        if (inNextMileage < mpd * 90 && m.frequency === RECURRING_ID) {
+        if (inNextMileage < mpd * DAYS && m.frequency === RECURRING_ID) {
           m.inNextMileage = inNextMileage;
           m.inNextDuration = moment().add(inNextDays, 'days').fromNow();
           return m;
@@ -413,7 +414,7 @@
       if (!(this.length && this.length > 1)) {
         return;
       }
-      ceil = moment();
+      ceil = moment(this.last().get('date'));
       floor = ceil.subtract(days, 'days').startOf('month');
       models = this.filter(function(model) {
         var modelDate;
