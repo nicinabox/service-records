@@ -12,7 +12,8 @@ var vehicleRoutes = require('./app/routes/vehicle');
 var sessionRoutes = require('./app/routes/session');
 var app           = express();
 
-var mongoDbPath = process.env.MONGOHQ_URL || 'mongodb://localhost/service-records';
+var MONGO_URL = process.env.MONGO_URL || process.env.MONGOHQ_URL;
+var mongoDbPath = MONGO_URL || 'mongodb://localhost/service-records';
 mongoose.connect(mongoDbPath);
 
 var ONE_YEAR = 31557600000;
@@ -25,7 +26,7 @@ passwordless.addDelivery(
   function(tokenToSend, uidToSend, recipient, callback) {
     postmark.send({
       "TextBody": 'Hello '+ recipient +'!\nYou can now access your vehicles here: ' +
-        'http://' + host + '/#login/' +
+        'https://' + host + '/#login/' +
         encodeURIComponent(uidToSend) + '/' +
         tokenToSend,
       "From": 'spanner@nicinabox.com',
