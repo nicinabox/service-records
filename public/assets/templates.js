@@ -3,9 +3,7 @@ this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["add_reminder"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "    <a href=\"#\" class=\"btn btn-danger pull-right\" data-destroy>\n      Remove\n    </a>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"reminder\">Reminder</label>\n    <input type=\"text\" class=\"form-control\" name=\"reminder\"\n      placeholder=\"E.g., Change oil at 60,000\" required>\n  </div>\n\n  <input type=\"hidden\" name=\"vehicle_id\" value="
-    + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
-    + ">\n  <button class=\"btn btn-success\">Save</button>\n\n";
+  var stack1, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"reminder\">Reminder</label>\n    <input type=\"text\" class=\"form-control\" name=\"notes\"\n      placeholder=\"E.g., Change oil at 60,000\" required>\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.model : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</form>\n";
@@ -24,17 +22,15 @@ this["Handlebars"]["templates"]["add_service"] = Handlebars.template({"1":functi
   },"7":function(depth0,helpers,partials,data) {
   return "    <a href=\"#\" class=\"btn btn-danger pull-right\" data-destroy>\n      Remove\n    </a>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, functionType="function", buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"date\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"date\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
     + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD, YYYY", {"name":"formatDate","hash":{},"data":data})))
     + "\">\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"mileage\">Mileage</label>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.currentEstimatedMileage : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
   buffer += "  </div>\n\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = ((stack1 = (depth0 != null ? depth0.vehicle : depth0)) != null ? stack1.settings : stack1)) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.vehicle : depth0)) != null ? stack1.enable_cost : stack1), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  buffer += "\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"notes\">Notes</label>\n    <textarea name=\"notes\" class=\"form-control\"\n      placeholder=\"E.g., Change oil, oil filter\"></textarea>\n  </div>\n\n  <input type=\"hidden\" name=\"vehicle_id\" value="
-    + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
-    + ">\n  <button class=\"btn btn-success\">Save</button>\n\n";
+  buffer += "\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"notes\">Notes</label>\n    <textarea name=\"notes\" class=\"form-control\"\n      placeholder=\"E.g., Change oil, oil filter\"></textarea>\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.model : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</form>\n";
@@ -118,13 +114,13 @@ this["Handlebars"]["templates"]["records"] = Handlebars.template({"1":function(d
   return buffer + "      </div>\n    </div>\n";
 },"2":function(depth0,helpers,partials,data,depths) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "            <tr class=\"record\" data-id=\""
-    + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "\">\n              <td class=\"date\">"
     + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD", {"name":"formatDate","hash":{},"data":data})))
     + "</td>\n              <td class=\"mileage\">"
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "000,000", (depth0 != null ? depth0.mileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
     + "</td>\n\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depths[2] != null ? depths[2].settings : depths[2])) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(3, data, depths),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depths[2] != null ? depths[2].enable_cost : depths[2]), {"name":"if","hash":{},"fn":this.program(3, data, depths),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "\n              <td class=\"notes\">"
     + escapeExpression(((helper = (helper = helpers.notes || (depth0 != null ? depth0.notes : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"notes","hash":{},"data":data}) : helper)))
@@ -136,13 +132,13 @@ this["Handlebars"]["templates"]["records"] = Handlebars.template({"1":function(d
     + "</td>\n";
 },"5":function(depth0,helpers,partials,data,depths) {
   var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "          <div class=\"record\" data-id=\""
-    + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
+    + escapeExpression(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"id","hash":{},"data":data}) : helper)))
     + "\">\n            <header>\n              <span class=\"date\">"
     + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD", {"name":"formatDate","hash":{},"data":data})))
     + "</span>\n              <span class=\"mileage\">"
     + escapeExpression(((helpers.formatNumber || (depth0 && depth0.formatNumber) || helperMissing).call(depth0, "000,000", (depth0 != null ? depth0.mileage : depth0), {"name":"formatNumber","hash":{},"data":data})))
     + "</span>\n\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depths[2] != null ? depths[2].settings : depths[2])) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(6, data, depths),"inverse":this.noop,"data":data});
+  stack1 = helpers['if'].call(depth0, (depths[2] != null ? depths[2].enable_cost : depths[2]), {"name":"if","hash":{},"fn":this.program(6, data, depths),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "            </header>\n            <p class=\"notes\">\n              "
     + escapeExpression(((helper = (helper = helpers.notes || (depth0 != null ? depth0.notes : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"notes","hash":{},"data":data}) : helper)))
@@ -165,7 +161,7 @@ this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["reminders"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
   return "    <li>\n      <a href=\"#\" class=\"js-reminder\">\n        "
-    + escapeExpression(((helper = (helper = helpers.reminder || (depth0 != null ? depth0.reminder : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"reminder","hash":{},"data":data}) : helper)))
+    + escapeExpression(((helper = (helper = helpers.notes || (depth0 != null ? depth0.notes : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"notes","hash":{},"data":data}) : helper)))
     + "\n      </a>\n    </li>\n";
 },"3":function(depth0,helpers,partials,data) {
   return "    <span class=\"text-muted\">No reminders set</span>\n";
@@ -215,9 +211,7 @@ this["Handlebars"]["templates"]["vehicle"] = Handlebars.template({"1":function(d
 },"7":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "      <div class=\"row\">\n        <div class=\"col-sm-4\">\n          "
     + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.remindersView : depth0), {"name":"view","hash":{},"data":data})))
-    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n          "
-    + escapeExpression(((helpers.view || (depth0 && depth0.view) || helperMissing).call(depth0, (depth0 != null ? depth0.nextActionsView : depth0), {"name":"view","hash":{},"data":data})))
-    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n          <h5 class=\"\">\n            <i class=\"fa fa-book fa-fw\"></i>\n            Vehicle Notes\n          </h5>\n\n          <div id=\"vehicle-notes\" class=\"js-edit-vehicle-notes\">\n            ";
+    + "\n        </div>\n\n        <div class=\"col-sm-4\">\n        </div>\n\n        <div class=\"col-sm-4\">\n          <h5 class=\"\">\n            <i class=\"fa fa-book fa-fw\"></i>\n            Vehicle Notes\n          </h5>\n\n          <div id=\"vehicle-notes\" class=\"js-edit-vehicle-notes\">\n            ";
   stack1 = ((helpers.markdown || (depth0 && depth0.markdown) || helperMissing).call(depth0, (depth0 != null ? depth0.notes : depth0), {"name":"markdown","hash":{},"data":data}));
   if (stack1 != null) { buffer += stack1; }
   buffer += "\n";
@@ -302,54 +296,19 @@ this["Handlebars"]["templates"]["vehicle_header"] = Handlebars.template({"compil
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
-this["Handlebars"]["templates"]["vehicle_next_actions"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
-  return "";
-},"3":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "  <h5 class=\"\">\n    <span class=\"fa fa-wrench fa-fw\"></span>\n    Upcoming Maintenance\n  </h5>\n  <ul class=\"list-unstyled\">\n";
-  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.nextActions : depth0), {"name":"each","hash":{},"fn":this.program(4, data),"inverse":this.program(6, data),"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer + "  </ul>\n";
-},"4":function(depth0,helpers,partials,data) {
-  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-  return "      <li>\n        "
-    + escapeExpression(((helper = (helper = helpers.action || (depth0 != null ? depth0.action : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"action","hash":{},"data":data}) : helper)))
-    + " "
-    + escapeExpression(((helper = (helper = helpers.item || (depth0 != null ? depth0.item : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"item","hash":{},"data":data}) : helper)))
-    + " "
-    + escapeExpression(((helper = (helper = helpers.inNextDuration || (depth0 != null ? depth0.inNextDuration : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"inNextDuration","hash":{},"data":data}) : helper)))
-    + "\n      </li>\n";
-},"6":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "";
-  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.vin : depth0), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.program(9, data),"data":data});
-  if (stack1 != null) { buffer += stack1; }
-  return buffer;
-},"7":function(depth0,helpers,partials,data) {
-  return "        <span class=\"text-muted\">All good!</span>\n";
-  },"9":function(depth0,helpers,partials,data) {
-  return "        <span class=\"text-muted\">\n          Add your VIN (click on your vehicle in the upper left) to get maintenance based on your mileage.\n        </span>\n";
-  },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helperMissing=helpers.helperMissing, buffer = "";
-  stack1 = ((helpers.empty || (depth0 && depth0.empty) || helperMissing).call(depth0, (depth0 != null ? depth0.schedule : depth0), {"name":"empty","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data}));
-  if (stack1 != null) { buffer += stack1; }
-  return buffer;
-},"useData":true});;
-this["Handlebars"] = this["Handlebars"] || {};
-this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["vehicle_settings"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "        <i class=\"fa fa-check pull-right\"></i>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<ul class=\"nav nav-pills nav-stacked\">\n  <li>\n    <a href=\"#vehicles/"
-    + escapeExpression(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"_id","hash":{},"data":data}) : helper)))
-    + "/details\">\n      Details\n    </a>\n  </li>\n  <li>\n    <a href=\"#\" class=\"js-enable-cost\">\n      Enable Cost\n\n";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 != null ? depth0.settings : depth0)) != null ? stack1.enableCost : stack1), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  var stack1, buffer = "<ul class=\"nav nav-pills nav-stacked\">\n  <li>\n    <a href=\"#\" class=\"js-enable-cost\">\n      Enable Cost\n\n";
+  stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.enable_cost : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "    </a>\n  </li>\n  <li>\n    <a href=\"#\" class=\"js-import-records\">\n      Import&hellip;\n    </a>\n  </li>\n  <li>\n    <a href=\"#\" class=\"text-danger js-remove-vehicle\">\n      Remove&hellip;\n    </a>\n  </li>\n</ul>\n";
+  return buffer + "    </a>\n  </li>\n  <li>\n    <a href=\"#\" class=\"text-danger js-remove-vehicle\">\n      Remove&hellip;\n    </a>\n  </li>\n</ul>\n";
 },"useData":true});;
 this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["vehicles"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, buffer = "        <div class=\"col-md-3\">\n";
-  stack1 = ((helpers.link || (depth0 && depth0.link) || helperMissing).call(depth0, "vehicles/{{_id}}", {"name":"link","hash":{
+  stack1 = ((helpers.link || (depth0 && depth0.link) || helperMissing).call(depth0, "vehicles/{{id}}", {"name":"link","hash":{
     'expand-tokens': (true),
     'class': ("vehicle")
   },"fn":this.program(2, data),"inverse":this.noop,"data":data}));
@@ -381,7 +340,7 @@ this["Handlebars"] = this["Handlebars"] || {};
 this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["vehicles_menu"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var stack1, helperMissing=helpers.helperMissing, buffer = "  <li>\n";
-  stack1 = ((helpers.link || (depth0 && depth0.link) || helperMissing).call(depth0, "vehicles/{{_id}}", {"name":"link","hash":{
+  stack1 = ((helpers.link || (depth0 && depth0.link) || helperMissing).call(depth0, "vehicles/{{id}}", {"name":"link","hash":{
     'expand-tokens': (true)
   },"fn":this.program(2, data),"inverse":this.noop,"data":data}));
   if (stack1 != null) { buffer += stack1; }
@@ -406,8 +365,8 @@ this["Handlebars"]["templates"]["welcome"] = Handlebars.template({"1":function(d
   return "          <h4 class=\"text-success\">\n            <i class=\"fa fa-check\"></i>\n            Check your email for a link.\n\n            <a href=\"#\" class=\"try-again\">Try again.</a>\n          </h4>\n\n";
   },"3":function(depth0,helpers,partials,data) {
   var stack1, helper, lambda=this.lambda, escapeExpression=this.escapeExpression, functionType="function", helperMissing=helpers.helperMissing;
-  return "          <form class=\"form-inline\">\n            <div class=\"form-group\">\n              <input id=\"user\" name=\"user\" type=\"email\" class=\"form-control\"\n                value=\""
-    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.user : depth0)) != null ? stack1.user : stack1), depth0))
+  return "          <form class=\"form-inline\">\n            <div class=\"form-group\">\n              <input id=\"email\" name=\"email\" type=\"email\" class=\"form-control\"\n                value=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.user : depth0)) != null ? stack1.email : stack1), depth0))
     + "\" placeholder=\""
     + escapeExpression(((helper = (helper = helpers.placeholder || (depth0 != null ? depth0.placeholder : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"placeholder","hash":{},"data":data}) : helper)))
     + "\" autofocus>\n            </div>\n\n            <button class=\"btn btn-primary\">Sign In</button>\n\n            <p class=\"help-block\">\n              <small class=\"text-muted\">\n                First time? We'll setup your account automagically.\n              </small>\n            </p>\n          </form>\n";
@@ -415,5 +374,5 @@ this["Handlebars"]["templates"]["welcome"] = Handlebars.template({"1":function(d
   var stack1, buffer = "<div id=\"main\">\n  <div class=\"container\">\n    <div class=\"row text-center\">\n      <div class=\"col-sm-10 col-sm-offset-1\">\n        <h2>\n          <strong>\n            The easiest way keep service records for all your vehicles\n          </strong>\n        </h2>\n        <p class=\"lead\">\n          Keeping useful maintenance records is a hassle, so most folks don't bother. <br>Spanner lets you keep records in a natural way.\n        </p>\n      </div>\n    </div>\n\n    <div class=\"row text-center\">\n      <div class=\"col-sm-6 col-sm-offset-3\">\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.authenticating : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.program(3, data),"data":data});
   if (stack1 != null) { buffer += stack1; }
-  return buffer + "      </div>\n    </div>\n\n    <div class=\"row\">\n      <div id=\"teaser\">\n        <img src=\"assets/teaser-2.png\" alt=\"\">\n      </div>\n    </div>\n  </div>\n</div>\n";
+  return buffer + "      </div>\n    </div>\n\n    <div class=\"row\">\n      <div id=\"teaser\">\n        <img src=\"/assets/teaser-2.png\" alt=\"\">\n      </div>\n    </div>\n  </div>\n</div>\n";
 },"useData":true});;

@@ -1,5 +1,5 @@
 (function() {
-  var App, _sync, buildUrl,
+  var App, _sync,
     extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     hasProp = {}.hasOwnProperty,
     slice = [].slice;
@@ -17,27 +17,19 @@
       this.router = new App.ApplicationRouter;
       this.popover = new App.PopOverView;
       this.vehicles = new App.Vehicles;
-      return $.when(this.session.authorize()).then((function(_this) {
+      this.session.on('auth:resolve', (function(_this) {
         return function() {
-          _this.session.on('auth:resolve', function() {
-            var fragment;
-            fragment = Backbone.history.fragment;
-            if (!fragment || /login/.test(fragment)) {
-              return App.router.redirectTo('vehicles');
-            }
-          });
-          _this.session.on('auth:reject', function() {
-            return App.router.redirectTo('');
-          });
-          Backbone.history.start();
-          if (_this.session.isAuthorized()) {
-            _this.vehicles.fetch();
-            return _this.session.trigger('auth:resolve');
-          } else {
-            return _this.session.trigger('auth:reject');
-          }
+          return _this.router.redirectTo('vehicles');
         };
       })(this));
+      this.session.on('auth:reject', (function(_this) {
+        return function() {
+          return _this.router.redirectTo('');
+        };
+      })(this));
+      return Backbone.history.start({
+        pushState: true
+      });
     }
   };
 
@@ -55,7 +47,10 @@
 
   Backbone.sync = function(method, model, options) {
     var _error;
-    options.url = buildUrl(method, model, options);
+    options.headers = {
+      accept: 'application/json;version=2',
+      authorization: "Token " + (App.session.get('auth_token'))
+    };
     if (model && (method === 'create' || method === 'update' || method === 'patch')) {
       options.contentType = 'application/json';
       options.data = JSON.stringify(options.attrs || model.toJSON());
@@ -70,13 +65,6 @@
       }
     };
     return _sync.call(this, method, model, options);
-  };
-
-  buildUrl = function(method, model, options) {
-    var q, url;
-    q = $.param(App.session.toRequestJSON());
-    url = _.result(model, 'url');
-    return [url, q].join('?');
   };
 
   Handlebars.registerHelpers({
@@ -110,17 +98,6 @@
     }
   });
 
-  App.MaintenanceAction = (function(superClass) {
-    extend(MaintenanceAction, superClass);
-
-    function MaintenanceAction() {
-      return MaintenanceAction.__super__.constructor.apply(this, arguments);
-    }
-
-    return MaintenanceAction;
-
-  })(Thorax.Model);
-
   App.Record = (function(superClass) {
     extend(Record, superClass);
 
@@ -129,8 +106,6 @@
     }
 
     Record.prototype.validatePresence = ['date', 'notes'];
-
-    Record.prototype.idAttribute = '_id';
 
     Record.prototype.validate = function(attrs) {
       var errors;
@@ -167,9 +142,7 @@
       return Reminder.__super__.constructor.apply(this, arguments);
     }
 
-    Reminder.prototype.validatePresence = ['reminder'];
-
-    Reminder.prototype.idAttribute = '_id';
+    Reminder.prototype.validatePresence = ['notes'];
 
     Reminder.prototype.validate = function(attrs) {
       var errors;
@@ -200,20 +173,26 @@
       return Session.__super__.constructor.apply(this, arguments);
     }
 
-    Session.prototype.urlRoot = '/session';
-
-    Session.prototype.idAttribute = 'uid';
+    Session.prototype.urlRoot = '/api/sessions';
 
     Session.prototype.initialize = function() {
-      return this.on('change:token', this.onChangeToken);
+      return this.on('change:auth_token', this.onChangeToken);
     };
 
-    Session.prototype.toRequestJSON = function() {
-      return _.pick(this.toJSON(), 'uid', 'token');
-    };
-
-    Session.prototype.login = function(data) {
+    Session.prototype.requestSession = function(data) {
       return this.save(data);
+    };
+
+    Session.prototype.login = function(loginToken) {
+      return $.ajax({
+        url: [this.urlRoot, loginToken].join('/'),
+        dataType: 'json',
+        success: (function(_this) {
+          return function(response) {
+            return _this.authorize(response);
+          };
+        })(this)
+      });
     };
 
     Session.prototype.logout = function() {
@@ -224,15 +203,21 @@
     };
 
     Session.prototype.authorize = function(data) {
-      if (data) {
-        this.set(data);
-        return localStorage.setItem('session', JSON.stringify(this.toJSON()));
-      } else {
-        data = JSON.parse(localStorage.getItem('session'));
-        if (data) {
-          return this.set(data);
-        }
-      }
+      return setTimeout((function(_this) {
+        return function() {
+          if (data) {
+            _this.set(data);
+            return localStorage.setItem('session', JSON.stringify(_this.toJSON()));
+          } else {
+            data = JSON.parse(localStorage.getItem('session'));
+            if (data) {
+              return _this.set(data);
+            } else {
+              return _this.onChangeToken();
+            }
+          }
+        };
+      })(this), 1);
     };
 
     Session.prototype.unauthorize = function() {
@@ -240,7 +225,7 @@
     };
 
     Session.prototype.isAuthorized = function() {
-      return !!this.get('token');
+      return !!this.get('auth_token');
     };
 
     Session.prototype.onChangeToken = function() {
@@ -262,8 +247,6 @@
       return Vehicle.__super__.constructor.apply(this, arguments);
     }
 
-    Vehicle.prototype.idAttribute = '_id';
-
     Vehicle.prototype.validatePresence = ['name'];
 
     Vehicle.prototype.url = function() {
@@ -272,10 +255,6 @@
       } else {
         return "/api/vehicles";
       }
-    };
-
-    Vehicle.prototype.settings = function() {
-      return this.get('settings') || {};
     };
 
     Vehicle.prototype.hasVin = function() {
@@ -314,49 +293,6 @@
 
   })(Thorax.Model);
 
-  App.MaintenanceSchedule = (function(superClass) {
-    extend(MaintenanceSchedule, superClass);
-
-    function MaintenanceSchedule() {
-      return MaintenanceSchedule.__super__.constructor.apply(this, arguments);
-    }
-
-    MaintenanceSchedule.prototype.model = App.MaintenanceAction;
-
-    MaintenanceSchedule.prototype.url = function() {
-      return "/api/vehicles/" + this.vehicleId + "/maintenance";
-    };
-
-    MaintenanceSchedule.prototype.initialize = function(models, options) {
-      return this.vehicleId = options.vehicleId;
-    };
-
-    MaintenanceSchedule.prototype.nextActions = function(mileage, mpd) {
-      var DAYS, RECURRING_ID, actions;
-      RECURRING_ID = 4;
-      DAYS = 90;
-      actions = this.map(function(model) {
-        var inNextDays, inNextMileage, m;
-        m = model.toJSON();
-        inNextMileage = m.intervalMileage - (mileage % m.intervalMileage);
-        inNextDays = Math.floor(inNextMileage / mpd);
-        if (inNextMileage < mpd * DAYS && m.frequency === RECURRING_ID) {
-          m.inNextMileage = inNextMileage;
-          m.inNextDuration = moment().add(inNextDays, 'days').fromNow();
-          return m;
-        }
-      });
-      return _(actions).compact().indexBy('item').values().value();
-    };
-
-    MaintenanceSchedule.prototype.parse = function(data) {
-      return data.actions.actionHolder;
-    };
-
-    return MaintenanceSchedule;
-
-  })(Thorax.Collection);
-
   App.Records = (function(superClass) {
     extend(Records, superClass);
 
@@ -371,7 +307,8 @@
     };
 
     Records.prototype.initialize = function(models, options) {
-      return this.vehicleId = options.vehicleId;
+      this.vehicleId = options.vehicleId;
+      return this.vehicle = options.vehicle;
     };
 
     Records.prototype.comparator = 'date';
@@ -386,24 +323,6 @@
       elapsedDays = moment().subtract(1, 'day').diff(last.date, 'days');
       currentMileage = last.mileage + (elapsedDays * mpd);
       return currentMileage;
-    };
-
-    Records.prototype.milesPerYear = function() {
-      var ONE_YEAR, elapsedDays, first, mpd, mpy, remainingDays;
-      ONE_YEAR = 365;
-      mpd = this.milesPerDay();
-      if (!mpd) {
-        return;
-      }
-      first = this.first().toJSON();
-      elapsedDays = moment().diff(first.date, 'days');
-      if (elapsedDays < ONE_YEAR) {
-        remainingDays = ONE_YEAR - moment().dayOfYear();
-        mpy = mpd * (elapsedDays + remainingDays);
-      } else {
-        mpy = mpd * ONE_YEAR;
-      }
-      return Math.floor(mpy / 10) * 10;
     };
 
     Records.prototype.recentMilesPerDay = function(days) {
@@ -435,19 +354,12 @@
       return +(elapsedMileage / elapsedDays).toFixed(2);
     };
 
+    Records.prototype.milesPerYear = function() {
+      return this.vehicle.get('miles_per_year');
+    };
+
     Records.prototype.milesPerDay = function() {
-      var elapsedDays, elapsedMileage, first, last;
-      if (!this.length) {
-        return;
-      }
-      first = this.first().toJSON();
-      last = this.last().toJSON();
-      if (!last.mileage) {
-        return;
-      }
-      elapsedDays = moment(last.date).diff(first.date, 'days');
-      elapsedMileage = last.mileage - first.mileage;
-      return +(elapsedMileage / elapsedDays).toFixed(2);
+      return this.vehicle.get('miles_per_day');
     };
 
     Records.prototype.groupByYear = function(data) {
@@ -1230,8 +1142,7 @@
     };
 
     SessionView.prototype.initialize = function() {
-      this.model = App.session;
-      return this.model.fetch();
+      return this.model = App.session;
     };
 
     SessionView.prototype.showSessionPopover = function(e) {
@@ -1270,7 +1181,7 @@
         this.model = this.vehicles.get(id);
       } else {
         this.model = new App.Vehicle({
-          _id: id
+          id: id
         });
         this.model.fetch();
       }
@@ -1288,38 +1199,6 @@
 
   })(Thorax.View);
 
-  App.VehicleNextActionsView = (function(superClass) {
-    extend(VehicleNextActionsView, superClass);
-
-    function VehicleNextActionsView() {
-      return VehicleNextActionsView.__super__.constructor.apply(this, arguments);
-    }
-
-    VehicleNextActionsView.prototype.name = 'vehicle_next_actions';
-
-    VehicleNextActionsView.prototype.initialize = function() {
-      var _collectionFetch, _scheduleFetch;
-      this.schedule = new App.MaintenanceSchedule([], {
-        vehicleId: this.model.id
-      });
-      if (!this.schedule.length) {
-        _scheduleFetch = this.schedule.fetch();
-      }
-      if (!this.collection.length) {
-        _collectionFetch = this.collection.fetch();
-      }
-      return $.when(_scheduleFetch, _collectionFetch).then((function(_this) {
-        return function() {
-          _this.nextActions = _this.schedule.nextActions(_this.collection.currentEstimatedMileage(), _this.collection.recentMilesPerDay());
-          return _this.render();
-        };
-      })(this));
-    };
-
-    return VehicleNextActionsView;
-
-  })(Thorax.View);
-
   App.VehicleSettingsView = (function(superClass) {
     extend(VehicleSettingsView, superClass);
 
@@ -1333,19 +1212,15 @@
       'click a[class*=js-]': function(e) {
         return e.preventDefault();
       },
-      'click .js-enable-cost': 'enableCost',
+      'click .js-enable-cost': 'enable_cost',
       'click .js-import-records': 'importRecords',
       'click .js-retire-vehicle': 'retireVehicle',
       'click .js-remove-vehicle': 'removeVehicle'
     };
 
-    VehicleSettingsView.prototype.enableCost = function() {
-      var settings;
-      settings = this.model.settings();
+    VehicleSettingsView.prototype.enable_cost = function() {
       return this.model.save({
-        settings: {
-          enableCost: !settings.enableCost
-        }
+        enable_cost: !this.model.get('enable_cost')
       });
     };
 
@@ -1403,12 +1278,13 @@
         this.model = this.vehicles.get(id);
       } else {
         this.model = new App.Vehicle({
-          _id: id
+          id: id
         });
         this.model.fetch();
       }
       this.collection = new App.Records([], {
-        vehicleId: id
+        vehicleId: id,
+        vehicle: this.model
       });
       this.reminders = new App.Reminders([], {
         vehicleId: id
@@ -1427,10 +1303,6 @@
       });
       this.vehicleHeaderView = new App.VehicleHeaderView({
         model: this.model
-      });
-      this.nextActionsView = new App.VehicleNextActionsView({
-        model: this.model,
-        collection: this.collection
       });
       this.reminders.fetch();
       return this.collection.fetch();
@@ -1590,7 +1462,7 @@
     WelcomeView.prototype.id = 'welcome';
 
     WelcomeView.prototype.events = {
-      'submit form': 'login',
+      'submit form': 'requestSession',
       'click .try-again': 'tryAgain'
     };
 
@@ -1599,11 +1471,11 @@
       return this.user = {};
     };
 
-    WelcomeView.prototype.login = function(e) {
+    WelcomeView.prototype.requestSession = function(e) {
       e.preventDefault();
       this.authenticating = true;
       this.user = this.serialize();
-      App.session.login(this.user);
+      App.session.requestSession(this.user);
       return this.render();
     };
 
@@ -1630,8 +1502,7 @@
       '': 'welcome',
       'vehicles': 'vehicles',
       'vehicles/:id': 'vehicle',
-      'vehicles/:id/details': 'vehicleDetails',
-      'login/:uid/:token': 'login'
+      'sessions/:token': 'login'
     };
 
     function ApplicationRouter() {
@@ -1645,6 +1516,7 @@
         }
       }, this);
       ApplicationRouter.__super__.constructor.apply(this, arguments);
+      App.session.authorize();
       this.on('route', function() {
         return App.layout.$('.pop-over').remove();
       });
@@ -1669,11 +1541,8 @@
       return App.currentView = view;
     };
 
-    ApplicationRouter.prototype.login = function(uid, token) {
-      return App.session.authorize({
-        uid: uid,
-        token: token
-      });
+    ApplicationRouter.prototype.login = function(token) {
+      return App.session.login(token);
     };
 
     return ApplicationRouter;
