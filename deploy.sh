@@ -6,7 +6,7 @@
 # Push heroku
 # Return to previous branch
 
-DEPLOY_BRANCH='deploy'
+DEPLOY_BRANCH='deploy-ng'
 CURRENT_BRANCH=`git branch | awk '/^\*/{print $2}'`
 
 echo "=> Checking out $DEPLOY_BRANCH"
@@ -17,14 +17,14 @@ if [[ $? > 0 ]]; then
 fi
 
 echo "=> Precompiling"
-git merge master --no-edit
+git merge $CURRENT_BRANCH --no-edit
 gulp precompile
 
 echo "=> Committing dist"
 git add . && git ci -m "Dist"
 
 echo "=> Pushing to remote"
-git push dokku deploy:master $1
+git push ng $DEPLOY_BRANCH:master $1
 
 echo "=> Returning to $CURRENT_BRANCH"
 git checkout $CURRENT_BRANCH

@@ -1,61 +1,44 @@
-var _              = require('lodash');
-var express        = require('express');
-var bodyParser     = require('body-parser');
-var expressSession = require('express-session');
-var mongoose       = require('mongoose');
-var passwordless   = require('passwordless');
-var MongoStore     = require('passwordless-mongostore');
+var https     = require('https')
+var path      = require('path')
+var url       = require('url')
+var httpProxy = require('http-proxy')
+var express   = require('express')
 
-var postmark = require("postmark")(process.env.POSTMARK_API_KEY);
+var isProd   = process.env.NODE_ENV === 'production'
+var PORT     = process.env.PORT || 8080
+var HOST     = isProd ? 'https://spanner-api.apps.nicinabox.com' : 'http://localhost:3000'
 
-var vehicleRoutes = require('./app/routes/vehicle');
-var sessionRoutes = require('./app/routes/session');
-var app           = express();
+var ONE_YEAR = 31557600000
 
-var MONGO_URL = process.env.MONGO_URL || process.env.MONGOHQ_URL;
-var mongoDbPath = MONGO_URL || 'mongodb://localhost/service-records';
-mongoose.connect(mongoDbPath);
+var app = express()
+var apiProxy = httpProxy.createProxyServer({
+  ignorePath: true,
+  agent: isProd ? https.globalAgent : false,
+  headers: {
+    host: url.parse(HOST).hostname
+  }
+})
 
-var ONE_YEAR = 31557600000;
-var host = process.env.DELIVERY_HOST || 'localhost:8080';
+var static = express.static(path.join(__dirname, '../public/'), { maxAge: ONE_YEAR })
+app.use('/', static)
 
-passwordless.init(new MongoStore(mongoDbPath), {
-  allowTokenReuse: true
-});
-passwordless.addDelivery(
-  function(tokenToSend, uidToSend, recipient, callback) {
-    postmark.send({
-      "TextBody": 'Hello '+ recipient +'!\nYou can now access your vehicles here: ' +
-        'https://' + host + '/#login/' +
-        encodeURIComponent(uidToSend) + '/' +
-        tokenToSend,
-      "From": 'spanner@nicinabox.com',
-      "To": recipient,
-      "Subject": 'Login to Spanner'
-    }, function(err, message) {
-      if (err) console.log(err);
-      callback(err);
-    });
-  }, {
-    ttl: 1000 * 60 * 1440 * 30 // 30 days
-  });
+app.all('/api/*', function(req, res){
+  var path = req.path.replace('/api', '')
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(expressSession({
-  secret: '42',
-  saveUninitialized: true,
-  resave: false
-}));
+  apiProxy.web(req, res, {
+    target: HOST + path
+  })
+})
 
-app.use(express.static('public', { maxAge: ONE_YEAR }));
+var routes = ['/', '/sessions/:token', '/vehicles', '/vehicles/:id']
 
-// Passwordless middleware
-app.use(passwordless.acceptToken());
+var handler = function (req, res) {
+  return res.sendFile(path.join(__dirname, '../public/index.html'))
+}
+routes.forEach(function (route) {
+  return app.get(route, handler)
+})
 
-app.use('/api', vehicleRoutes);
-app.use('/', sessionRoutes);
+app.listen(PORT)
 
-var port = process.env.PORT || 8080;
-app.listen(port);
-console.log('Magic happens on port ' + port);
+console.log('Magic happens on port ' + PORT)
