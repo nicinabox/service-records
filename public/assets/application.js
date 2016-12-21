@@ -19,17 +19,25 @@
       this.vehicles = new App.Vehicles;
       this.session.on('auth:resolve', (function(_this) {
         return function() {
+          if (!Backbone.History.started) {
+            Backbone.history.start({
+              pushState: true
+            });
+          }
           return _this.router.redirectTo('vehicles');
         };
       })(this));
       this.session.on('auth:reject', (function(_this) {
         return function() {
+          if (!Backbone.History.started) {
+            Backbone.history.start({
+              pushState: true
+            });
+          }
           return _this.router.redirectTo('');
         };
       })(this));
-      return Backbone.history.start({
-        pushState: true
-      });
+      return this.session.authorize();
     }
   };
 
@@ -203,21 +211,17 @@
     };
 
     Session.prototype.authorize = function(data) {
-      return setTimeout((function(_this) {
-        return function() {
-          if (data) {
-            _this.set(data);
-            return localStorage.setItem('session', JSON.stringify(_this.toJSON()));
-          } else {
-            data = JSON.parse(localStorage.getItem('session'));
-            if (data) {
-              return _this.set(data);
-            } else {
-              return _this.onChangeToken();
-            }
-          }
-        };
-      })(this), 1);
+      if (data) {
+        this.set(data);
+        return localStorage.setItem('session', JSON.stringify(this.toJSON()));
+      } else {
+        data = JSON.parse(localStorage.getItem('session'));
+        if (data) {
+          return this.set(data);
+        } else {
+          return this.onChangeToken();
+        }
+      }
     };
 
     Session.prototype.unauthorize = function() {
@@ -1516,7 +1520,6 @@
         }
       }, this);
       ApplicationRouter.__super__.constructor.apply(this, arguments);
-      App.session.authorize();
       this.on('route', function() {
         return App.layout.$('.pop-over').remove();
       });
