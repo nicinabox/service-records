@@ -24,7 +24,9 @@
               pushState: true
             });
           }
-          return _this.router.redirectTo('vehicles');
+          if (!Backbone.history.getFragment()) {
+            return _this.router.redirectTo('vehicles');
+          }
         };
       })(this));
       this.session.on('auth:reject', (function(_this) {
@@ -509,7 +511,13 @@
 
     AddReminderView.prototype.events = {
       'submit form': 'createOrUpdateRecord',
-      'click [data-destroy]': 'destroyRecord'
+      'click [data-destroy]': 'destroyRecord',
+      'rendered': function() {
+        return this.$('input[name=date]').datepicker({
+          format: 'M d, yyyy',
+          autoclose: true
+        });
+      }
     };
 
     AddReminderView.prototype.destroyRecord = function(e) {

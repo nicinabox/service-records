@@ -3,7 +3,9 @@ this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 this["Handlebars"]["templates"]["add_reminder"] = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   return "    <a href=\"#\" class=\"btn btn-danger pull-right\" data-destroy>\n      Remove\n    </a>\n";
   },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-  var stack1, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"reminder\">Reminder</label>\n    <input type=\"text\" class=\"form-control\" name=\"notes\"\n      placeholder=\"E.g., Change oil at 60,000\" required>\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n\n";
+  var stack1, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, buffer = "<form action=\"\">\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"reminder\">Note</label>\n    <input type=\"text\" class=\"form-control\" name=\"notes\"\n      placeholder=\"E.g., Change oil at 60,000\" required>\n  </div>\n\n  <div class=\"form-group\">\n    <label class=\"control-label\" for=\"reminder\">Date</label>\n    <input type=\"text\" name=\"date\" class=\"form-control\"\n      value=\""
+    + escapeExpression(((helpers.formatDate || (depth0 && depth0.formatDate) || helperMissing).call(depth0, (depth0 != null ? depth0.date : depth0), "MMM DD, YYYY", {"name":"formatDate","hash":{},"data":data})))
+    + "\">\n      <small class=\"help-block\">You'll get a reminder email on this day</small>\n  </div>\n\n  <button class=\"btn btn-success\">Save</button>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 != null ? depth0.model : depth0), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if (stack1 != null) { buffer += stack1; }
   return buffer + "</form>\n";
