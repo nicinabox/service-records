@@ -1514,7 +1514,7 @@
       '': 'welcome',
       'vehicles': 'vehicles',
       'vehicles/:id': 'vehicle',
-      'sessions/:token': 'login'
+      'login/:token': 'login'
     };
 
     function ApplicationRouter() {
