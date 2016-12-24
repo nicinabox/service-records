@@ -195,7 +195,7 @@
 
     Session.prototype.login = function(loginToken) {
       return $.ajax({
-        url: [this.urlRoot, loginToken].join('/'),
+        url: ['/api/login', loginToken].join('/'),
         dataType: 'json',
         success: (function(_this) {
           return function(response) {
