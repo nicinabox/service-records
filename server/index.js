@@ -33,7 +33,7 @@ app.all('/api/*', function(req, res){
   apiProxy.web(req, res, {
     target: HOST + path,
     headers: Object.assign({}, apiProxy.options.headers, {
-      'x-forwarded-for': 'lolnope' //remoteIp(req)
+      'x-forwarded-for': remoteIp(req)
     })
   })
 })
