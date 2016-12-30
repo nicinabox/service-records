@@ -319,18 +319,6 @@
 
     Records.prototype.comparator = 'date';
 
-    Records.prototype.currentEstimatedMileage = function() {
-      var currentMileage, elapsedDays, last, mpd;
-      mpd = this.recentMilesPerDay();
-      if (!mpd) {
-        return;
-      }
-      last = this.last().toJSON();
-      elapsedDays = moment().subtract(1, 'day').diff(last.date, 'days');
-      currentMileage = last.mileage + (elapsedDays * mpd);
-      return currentMileage;
-    };
-
     Records.prototype.recentMilesPerDay = function(days) {
       var ceil, elapsedDays, elapsedMileage, first, floor, last, models, previousIndex;
       if (days == null) {
@@ -358,6 +346,10 @@
       elapsedDays = moment(last.date).diff(first.date, 'days');
       elapsedMileage = last.mileage - first.mileage;
       return +(elapsedMileage / elapsedDays).toFixed(2);
+    };
+
+    Records.prototype.currentEstimatedMileage = function() {
+      return this.vehicle.get('estimated_mileage');
     };
 
     Records.prototype.milesPerYear = function() {
